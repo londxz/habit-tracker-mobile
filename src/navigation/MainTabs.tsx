@@ -24,6 +24,7 @@ export function MainTabs() {
         options={{
           title: 'Сегодня',
           tabBarIcon: getTodayTabIcon,
+          headerShown: false,
         }}
       />
 
