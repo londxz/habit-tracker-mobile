@@ -1,4 +1,5 @@
 import type { Habit, HabitsState } from './habitTypes';
+import { isHabitCompletedOn } from './isHabitCompletedOn';
 
 export const initialHabitsState: HabitsState = {
   habits: [],
@@ -35,10 +36,10 @@ export function habitsReducer(
       };
 
     case 'habitCompletionToggled': {
-      const isCompleted = state.completions.some(
-        completion =>
-          completion.habitId === action.habitId &&
-          completion.completedOn === action.completedOn,
+      const isCompleted = isHabitCompletedOn(
+        state.completions,
+        action.habitId,
+        action.completedOn,
       );
 
       if (isCompleted) {
