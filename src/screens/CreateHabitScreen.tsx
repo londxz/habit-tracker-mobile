@@ -21,6 +21,7 @@ import {
   validateHabitName,
   type HabitNameValidationError,
 } from '../features/habits/model/habitValidation';
+import { habitColorOptions } from '../features/habits/ui/habitColors';
 import type { RootStackParamList } from '../navigation/navigationTypes';
 
 type CreateHabitScreenProps = NativeStackScreenProps<
@@ -28,21 +29,7 @@ type CreateHabitScreenProps = NativeStackScreenProps<
   'CreateHabit'
 >;
 
-const habitColors: Array<{
-  value: HabitColor;
-  hex: string;
-}> = [
-  { value: 'blue', hex: '#3478F6' },
-  { value: 'teal', hex: '#30B0C7' },
-  { value: 'purple', hex: '#AF52DE' },
-  { value: 'coral', hex: '#FF6B5E' },
-  { value: 'amber', hex: '#FFB340' },
-  { value: 'pink', hex: '#FF375F' },
-];
-
-export function CreateHabitScreen({
-  navigation,
-}: CreateHabitScreenProps) {
+export function CreateHabitScreen({ navigation }: CreateHabitScreenProps) {
   const { state, dispatch } = useHabits();
   const insets = useSafeAreaInsets();
 
@@ -50,8 +37,9 @@ export function CreateHabitScreen({
   const [emoji, setEmoji] = useState('');
   const [color, setColor] = useState<HabitColor | null>(null);
   const [isReminderEnabled, setIsReminderEnabled] = useState(false);
-  const [nameError, setNameError] =
-    useState<HabitNameValidationError | null>(null);
+  const [nameError, setNameError] = useState<HabitNameValidationError | null>(
+    null,
+  );
 
   const canSave = name.trim().length > 0;
 
@@ -61,16 +49,11 @@ export function CreateHabitScreen({
   }
 
   function handleColorPress(value: HabitColor) {
-    setColor(currentColor =>
-      currentColor === value ? null : value,
-    );
+    setColor(currentColor => (currentColor === value ? null : value));
   }
 
   function handleSave() {
-    const validationResult = validateHabitName(
-      name,
-      state.habits,
-    );
+    const validationResult = validateHabitName(name, state.habits);
 
     if (!validationResult.isValid) {
       setNameError(validationResult.error);
@@ -118,9 +101,7 @@ export function CreateHabitScreen({
           />
 
           {nameError !== null ? (
-            <Text style={styles.error}>
-              {getNameErrorMessage(nameError)}
-            </Text>
+            <Text style={styles.error}>{getNameErrorMessage(nameError)}</Text>
           ) : null}
         </View>
 
@@ -142,7 +123,7 @@ export function CreateHabitScreen({
           <Text style={styles.label}>Цвет</Text>
 
           <View style={styles.colors}>
-            {habitColors.map(option => (
+            {habitColorOptions.map(option => (
               <Pressable
                 key={option.value}
                 accessibilityRole="button"
@@ -169,9 +150,7 @@ export function CreateHabitScreen({
         <View style={[styles.section, styles.reminderSection]}>
           <View style={styles.reminderText}>
             <Text style={styles.label}>Напоминание</Text>
-            <Text style={styles.reminderTime}>
-              Каждый день · 08:00
-            </Text>
+            <Text style={styles.reminderTime}>Каждый день · 08:00</Text>
           </View>
 
           <Switch
@@ -199,18 +178,14 @@ export function CreateHabitScreen({
             pressed && canSave && styles.saveButtonPressed,
           ]}
         >
-          <Text style={styles.saveButtonTitle}>
-            Добавить привычку
-          </Text>
+          <Text style={styles.saveButtonTitle}>Добавить привычку</Text>
         </Pressable>
       </View>
     </KeyboardAvoidingView>
   );
 }
 
-function getNameErrorMessage(
-  error: HabitNameValidationError,
-): string {
+function getNameErrorMessage(error: HabitNameValidationError): string {
   switch (error) {
     case 'required':
       return 'Введите название привычки';

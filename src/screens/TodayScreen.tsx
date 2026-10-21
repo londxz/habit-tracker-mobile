@@ -3,14 +3,19 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useHabits } from '../features/habits/context/HabitsProvider';
+import { isHabitCompletedOn } from '../features/habits/model/isHabitCompletedOn';
 import { AddHabitButton } from '../features/habits/ui/AddHabitButton';
+import { getHabitAccentColor } from '../features/habits/ui/habitColors';
 import type { RootStackParamList } from '../navigation/navigationTypes';
+import { getDateKey } from '../shared/date/getDateKey';
 
 export function TodayScreen() {
   const navigation = useNavigation();
-  const { state } = useHabits();
+  const { state, dispatch } = useHabits();
   const insets = useSafeAreaInsets();
-  const todayTitle = getTodayTitle(new Date());
+  const today = new Date();
+  const todayKey = getDateKey(today);
+  const todayTitle = getTodayTitle(today);
 
   function getRootNavigation() {
     return navigation.getParent<NavigationProp<RootStackParamList>>();
@@ -23,6 +28,14 @@ export function TodayScreen() {
   function handleHabitPress(habitId: string) {
     getRootNavigation()?.navigate('HabitDetails', {
       habitId,
+    });
+  }
+
+  function handleCompletionPress(habitId: string) {
+    dispatch({
+      type: 'habitCompletionToggled',
+      habitId,
+      completedOn: getDateKey(new Date()),
     });
   }
 
@@ -59,34 +72,93 @@ export function TodayScreen() {
               </Text>
             </View>
           ) : (
-            state.habits.map(habit => (
-              <Pressable
-                key={habit.id}
-                accessibilityRole="button"
-                onPress={() => handleHabitPress(habit.id)}
-                style={({ pressed }) => [
-                  styles.habitCard,
-                  pressed && styles.habitCardPressed,
-                ]}
-              >
-                {habit.emoji !== null ? (
-                  <Text style={styles.emoji}>{habit.emoji}</Text>
-                ) : null}
+            state.habits.map(habit => {
+              const isCompleted = isHabitCompletedOn(
+                state.completions,
+                habit.id,
+                todayKey,
+              );
+              const accentColor = getHabitAccentColor(habit.color);
 
-                <View style={styles.habitContent}>
-                  <Text style={styles.habitName}>{habit.name}</Text>
+              return (
+                <View
+                  key={habit.id}
+                  style={[
+                    styles.habitCard,
+                    isCompleted && styles.habitCardCompleted,
+                  ]}
+                >
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={`Открыть привычку ${habit.name}`}
+                    onPress={() => handleHabitPress(habit.id)}
+                    style={({ pressed }) => [
+                      styles.habitDetailsButton,
+                      pressed && styles.habitButtonPressed,
+                    ]}
+                  >
+                    {habit.emoji !== null ? (
+                      <View
+                        style={[
+                          styles.emojiContainer,
+                          {
+                            borderColor: `${accentColor}66`,
+                            backgroundColor: `${accentColor}12`,
+                          },
+                        ]}
+                      >
+                        <Text style={styles.emoji}>{habit.emoji}</Text>
+                      </View>
+                    ) : null}
 
-                  <Text style={styles.habitSchedule}>
-                    Каждый день
-                    {habit.reminder.isEnabled
-                      ? ` · ${habit.reminder.time}`
-                      : ''}
-                  </Text>
+                    <View style={styles.habitContent}>
+                      <Text
+                        style={[
+                          styles.habitName,
+                          isCompleted && styles.habitNameCompleted,
+                        ]}
+                      >
+                        {habit.name}
+                      </Text>
+
+                      <Text style={styles.habitSchedule}>
+                        Каждый день
+                        {habit.reminder.isEnabled
+                          ? ` · ${habit.reminder.time}`
+                          : ''}
+                      </Text>
+                    </View>
+                  </Pressable>
+
+                  <Pressable
+                    accessibilityRole="checkbox"
+                    accessibilityLabel={
+                      isCompleted
+                        ? `${habit.name}: отменить выполнение сегодня`
+                        : `${habit.name}: выполнить сегодня`
+                    }
+                    accessibilityState={{ checked: isCompleted }}
+                    hitSlop={6}
+                    onPress={() => handleCompletionPress(habit.id)}
+                    style={({ pressed }) => [
+                      styles.completionButton,
+                      pressed && styles.habitButtonPressed,
+                    ]}
+                  >
+                    <View
+                      style={[
+                        styles.completionCircle,
+                        isCompleted && styles.completionCircleCompleted,
+                      ]}
+                    >
+                      {isCompleted ? (
+                        <Text style={styles.checkmark}>✓</Text>
+                      ) : null}
+                    </View>
+                  </Pressable>
                 </View>
-
-                <View style={styles.completionCircle} />
-              </Pressable>
-            ))
+              );
+            })
           )}
         </View>
       </ScrollView>
@@ -151,15 +223,34 @@ const styles = StyleSheet.create({
     minHeight: 76,
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
+    overflow: 'hidden',
     borderRadius: 16,
     backgroundColor: '#FFFFFF',
   },
-  habitCardPressed: {
+  habitCardCompleted: {
+    backgroundColor: '#EDF4FF',
+  },
+  habitDetailsButton: {
+    minHeight: 76,
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 16,
+    paddingLeft: 16,
+  },
+  habitButtonPressed: {
     opacity: 0.65,
   },
-  emoji: {
+  emojiContainer: {
+    width: 52,
+    height: 52,
     marginRight: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderRadius: 14,
+  },
+  emoji: {
     fontSize: 30,
   },
   habitContent: {
@@ -170,18 +261,38 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#111111',
   },
+  habitNameCompleted: {
+    color: '#6C6C70',
+  },
   habitSchedule: {
     marginTop: 4,
     fontSize: 15,
     color: '#8E8E93',
   },
+  completionButton: {
+    width: 60,
+    minHeight: 76,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   completionCircle: {
     width: 28,
     height: 28,
-    marginLeft: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
     borderWidth: 2,
     borderColor: '#C7C7CC',
     borderRadius: 14,
+  },
+  completionCircleCompleted: {
+    borderColor: '#3478F6',
+    backgroundColor: '#3478F6',
+  },
+  checkmark: {
+    fontSize: 18,
+    lineHeight: 20,
+    fontWeight: '700',
+    color: '#FFFFFF',
   },
 });
 
