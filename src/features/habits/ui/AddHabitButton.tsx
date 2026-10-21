@@ -1,5 +1,7 @@
 import { Pressable, StyleSheet, Text } from 'react-native';
 
+import { appColors } from '../../../shared/theme/colors';
+
 type AddHabitButtonProps = {
   onPress: () => void;
 };
@@ -37,6 +39,6 @@ const styles = StyleSheet.create({
     fontSize: 36,
     lineHeight: 38,
     fontWeight: '300',
-    color: '#0A84FF',
+    color: appColors.accent,
   },
 });

@@ -14,3 +14,9 @@ export type MainTabsParamList = {
   Today: undefined;
   Progress: undefined;
 };
+
+export type CreateHabitStackParamList = {
+  CreateHabitForm: undefined;
+  HabitIconPicker: undefined;
+  HabitColorPicker: undefined;
+};
