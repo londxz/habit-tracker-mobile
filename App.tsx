@@ -12,13 +12,17 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 
+import { HabitsProvider } from './src/features/habits/context/HabitsProvider';
+
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
 
   return (
     <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
+      <HabitsProvider>
+        <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+        <AppContent />
+      </HabitsProvider>
     </SafeAreaProvider>
   );
 }
