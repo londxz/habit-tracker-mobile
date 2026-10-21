@@ -1,9 +1,9 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { ArchivedHabitsScreen } from '../screens/ArchivedHabitsScreen';
-import { CreateHabitScreen } from '../screens/CreateHabitScreen';
 import { EditHabitScreen } from '../screens/EditHabitScreen';
 import { HabitDetailsScreen } from '../screens/HabitDetailsScreen';
+import { CreateHabitNavigator } from './CreateHabitNavigator';
 import { MainTabs } from './MainTabs';
 import type { RootStackParamList } from './navigationTypes';
 
@@ -30,8 +30,11 @@ export function RootNavigator() {
 
       <Stack.Screen
         name="CreateHabit"
-        component={CreateHabitScreen}
-        options={{ title: 'Новая привычка' }}
+        component={CreateHabitNavigator}
+        options={{
+          headerShown: false,
+          presentation: 'modal',
+        }}
       />
 
       <Stack.Screen

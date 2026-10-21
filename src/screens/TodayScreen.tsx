@@ -5,9 +5,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useHabits } from '../features/habits/context/HabitsProvider';
 import { isHabitCompletedOn } from '../features/habits/model/isHabitCompletedOn';
 import { AddHabitButton } from '../features/habits/ui/AddHabitButton';
-import { getHabitAccentColor } from '../features/habits/ui/habitColors';
+import { HabitIcon } from '../features/habits/ui/HabitIcon';
 import type { RootStackParamList } from '../navigation/navigationTypes';
 import { getDateKey } from '../shared/date/getDateKey';
+import { appColors } from '../shared/theme/colors';
 
 export function TodayScreen() {
   const navigation = useNavigation();
@@ -78,8 +79,6 @@ export function TodayScreen() {
                 habit.id,
                 todayKey,
               );
-              const accentColor = getHabitAccentColor(habit.color);
-
               return (
                 <View
                   key={habit.id}
@@ -97,19 +96,13 @@ export function TodayScreen() {
                       pressed && styles.habitButtonPressed,
                     ]}
                   >
-                    {habit.emoji !== null ? (
-                      <View
-                        style={[
-                          styles.emojiContainer,
-                          {
-                            borderColor: `${accentColor}66`,
-                            backgroundColor: `${accentColor}12`,
-                          },
-                        ]}
-                      >
-                        <Text style={styles.emoji}>{habit.emoji}</Text>
-                      </View>
-                    ) : null}
+                    <View style={styles.habitIcon}>
+                      <HabitIcon
+                        name={habit.name}
+                        emoji={habit.emoji}
+                        color={habit.color}
+                      />
+                    </View>
 
                     <View style={styles.habitContent}>
                       <Text
@@ -241,17 +234,8 @@ const styles = StyleSheet.create({
   habitButtonPressed: {
     opacity: 0.65,
   },
-  emojiContainer: {
-    width: 52,
-    height: 52,
+  habitIcon: {
     marginRight: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderRadius: 14,
-  },
-  emoji: {
-    fontSize: 30,
   },
   habitContent: {
     flex: 1,
@@ -285,8 +269,8 @@ const styles = StyleSheet.create({
     borderRadius: 14,
   },
   completionCircleCompleted: {
-    borderColor: '#3478F6',
-    backgroundColor: '#3478F6',
+    borderColor: appColors.accent,
+    backgroundColor: appColors.accent,
   },
   checkmark: {
     fontSize: 18,

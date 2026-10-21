@@ -13,47 +13,48 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useCreateHabitDraft } from '../features/habits/context/CreateHabitDraftProvider';
 import { useHabits } from '../features/habits/context/HabitsProvider';
 import { createHabit } from '../features/habits/model/createHabit';
-import type { HabitColor } from '../features/habits/model/habitTypes';
 import {
   HABIT_NAME_MAX_LENGTH,
   validateHabitName,
   type HabitNameValidationError,
 } from '../features/habits/model/habitValidation';
-import { habitColorOptions } from '../features/habits/ui/habitColors';
-import type { RootStackParamList } from '../navigation/navigationTypes';
+import {
+  getHabitAccentColor,
+  getHabitColorName,
+} from '../features/habits/ui/habitColors';
+import { HabitIcon } from '../features/habits/ui/HabitIcon';
+import { HabitPreviewCard } from '../features/habits/ui/HabitPreviewCard';
+import type { CreateHabitStackParamList } from '../navigation/navigationTypes';
+import { appColors } from '../shared/theme/colors';
 
 type CreateHabitScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  'CreateHabit'
+  CreateHabitStackParamList,
+  'CreateHabitForm'
 >;
+
+const weekdays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 
 export function CreateHabitScreen({ navigation }: CreateHabitScreenProps) {
   const { state, dispatch } = useHabits();
+  const { draft, updateDraft } = useCreateHabitDraft();
   const insets = useSafeAreaInsets();
-
-  const [name, setName] = useState('');
-  const [emoji, setEmoji] = useState('');
-  const [color, setColor] = useState<HabitColor | null>(null);
-  const [isReminderEnabled, setIsReminderEnabled] = useState(false);
   const [nameError, setNameError] = useState<HabitNameValidationError | null>(
     null,
   );
 
-  const canSave = name.trim().length > 0;
+  const canSave = draft.name.trim().length > 0;
+  const accentColor = getHabitAccentColor(draft.color);
 
   function handleNameChange(value: string) {
-    setName(value);
+    updateDraft({ name: value });
     setNameError(null);
   }
 
-  function handleColorPress(value: HabitColor) {
-    setColor(currentColor => (currentColor === value ? null : value));
-  }
-
   function handleSave() {
-    const validationResult = validateHabitName(name, state.habits);
+    const validationResult = validateHabitName(draft.name, state.habits);
 
     if (!validationResult.isValid) {
       setNameError(validationResult.error);
@@ -62,11 +63,11 @@ export function CreateHabitScreen({ navigation }: CreateHabitScreenProps) {
 
     const habit = createHabit({
       name: validationResult.name,
-      emoji: emoji.trim() || null,
-      color,
+      emoji: draft.emoji.trim() || null,
+      color: draft.color,
       reminder: {
-        isEnabled: isReminderEnabled,
-        time: '08:00',
+        isEnabled: draft.isReminderEnabled,
+        time: draft.reminderTime,
       },
     });
 
@@ -75,7 +76,7 @@ export function CreateHabitScreen({ navigation }: CreateHabitScreenProps) {
       habit,
     });
 
-    navigation.goBack();
+    navigation.getParent()?.goBack();
   }
 
   return (
@@ -84,80 +85,156 @@ export function CreateHabitScreen({ navigation }: CreateHabitScreenProps) {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView
+        style={styles.scroll}
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
       >
-        <View style={styles.section}>
-          <Text style={styles.label}>Название</Text>
+        <Text style={styles.sectionTitle}>ОСНОВНОЕ</Text>
 
-          <TextInput
-            value={name}
-            onChangeText={handleNameChange}
-            placeholder="Например, читать 20 минут"
-            maxLength={HABIT_NAME_MAX_LENGTH}
-            autoFocus
-            returnKeyType="done"
-            style={styles.input}
-          />
+        <View style={styles.group}>
+          <View style={styles.row}>
+            <Text style={styles.rowLabel}>Название</Text>
 
-          {nameError !== null ? (
-            <Text style={styles.error}>{getNameErrorMessage(nameError)}</Text>
-          ) : null}
-        </View>
+            <TextInput
+              value={draft.name}
+              onChangeText={handleNameChange}
+              placeholder="Введите"
+              maxLength={HABIT_NAME_MAX_LENGTH}
+              returnKeyType="done"
+              textAlign="right"
+              style={styles.nameInput}
+            />
+          </View>
 
-        <View style={styles.section}>
-          <Text style={styles.label}>Иконка</Text>
+          <View style={styles.separator} />
 
-          <TextInput
-            value={emoji}
-            onChangeText={setEmoji}
-            placeholder="Например, 📚"
-            autoCorrect={false}
-            style={styles.input}
-          />
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Выбрать значок"
+            onPress={() => navigation.navigate('HabitIconPicker')}
+            style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}
+          >
+            <Text style={styles.rowLabel}>Значок</Text>
 
-          <Text style={styles.hint}>Необязательно</Text>
-        </View>
+            <View style={styles.rowValue}>
+              <HabitIcon
+                name={draft.name}
+                emoji={draft.emoji || null}
+                color={draft.color}
+                size={42}
+              />
+              <Text style={styles.chevron}>›</Text>
+            </View>
+          </Pressable>
 
-        <View style={styles.section}>
-          <Text style={styles.label}>Цвет</Text>
+          <View style={styles.separator} />
 
-          <View style={styles.colors}>
-            {habitColorOptions.map(option => (
-              <Pressable
-                key={option.value}
-                accessibilityRole="button"
-                accessibilityState={{
-                  selected: color === option.value,
-                }}
-                onPress={() => handleColorPress(option.value)}
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Выбрать цвет"
+            onPress={() => navigation.navigate('HabitColorPicker')}
+            style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}
+          >
+            <Text style={styles.rowLabel}>Цвет</Text>
+
+            <View style={styles.rowValue}>
+              <View
                 style={[
-                  styles.color,
-                  { backgroundColor: option.hex },
-                  color === option.value && styles.selectedColor,
+                  styles.colorValue,
+                  { backgroundColor: accentColor },
+                  draft.color === null && styles.colorValueNeutral,
                 ]}
-              >
-                {color === option.value ? (
-                  <Text style={styles.checkmark}>✓</Text>
-                ) : null}
-              </Pressable>
+              />
+              <Text style={styles.secondaryValue}>
+                {getHabitColorName(draft.color)}
+              </Text>
+              <Text style={styles.chevron}>›</Text>
+            </View>
+          </Pressable>
+        </View>
+
+        {nameError !== null ? (
+          <Text style={styles.error}>{getNameErrorMessage(nameError)}</Text>
+        ) : null}
+
+        <Text style={styles.sectionTitle}>РАСПИСАНИЕ</Text>
+
+        <View style={styles.group}>
+          <View style={styles.row}>
+            <Text style={styles.rowLabel}>Повторять</Text>
+
+            <View style={styles.rowValue}>
+              <Text style={styles.secondaryValue}>Каждый день</Text>
+            </View>
+          </View>
+
+          <View style={styles.separator} />
+
+          <View style={styles.weekdays}>
+            {weekdays.map(day => (
+              <View key={day} style={styles.weekday}>
+                <Text style={styles.weekdayName}>{day}</Text>
+                <View style={styles.weekdaySelected}>
+                  <Text style={styles.weekdayCheckmark}>✓</Text>
+                </View>
+              </View>
             ))}
           </View>
-
-          <Text style={styles.hint}>Необязательно</Text>
         </View>
 
-        <View style={[styles.section, styles.reminderSection]}>
-          <View style={styles.reminderText}>
-            <Text style={styles.label}>Напоминание</Text>
-            <Text style={styles.reminderTime}>Каждый день · 08:00</Text>
+        <Text style={styles.sectionTitle}>НАПОМИНАНИЕ</Text>
+
+        <View style={styles.group}>
+          <View style={styles.row}>
+            <Text style={styles.rowLabel}>Напоминать</Text>
+            <View
+              style={[
+                styles.switchContainer,
+                Platform.OS === 'ios' && styles.switchContainerIos,
+              ]}
+            >
+              <Switch
+                accessibilityLabel="Напоминать"
+                value={draft.isReminderEnabled}
+                onValueChange={value =>
+                  updateDraft({ isReminderEnabled: value })
+                }
+                style={
+                  Platform.OS === 'ios' ? styles.reminderSwitchIos : undefined
+                }
+              />
+            </View>
           </View>
 
-          <Switch
-            value={isReminderEnabled}
-            onValueChange={setIsReminderEnabled}
-          />
+          <View style={styles.separator} />
+
+          <View
+            style={[styles.row, !draft.isReminderEnabled && styles.rowDisabled]}
+          >
+            <Text style={styles.rowLabel}>Время</Text>
+            <View style={styles.rowValue}>
+              <Text style={styles.secondaryValue}>{draft.reminderTime}</Text>
+            </View>
+          </View>
         </View>
+
+        <Text style={styles.helperText}>
+          Уведомление придёт локально на этом устройстве.
+        </Text>
+
+        <Text style={styles.sectionTitle}>ПРЕДПРОСМОТР</Text>
+
+        <HabitPreviewCard
+          name={draft.name}
+          emoji={draft.emoji || null}
+          color={draft.color}
+          isReminderEnabled={draft.isReminderEnabled}
+          reminderTime={draft.reminderTime}
+        />
+
+        <Text style={styles.helperText}>
+          Все данные хранятся только на устройстве.
+        </Text>
       </ScrollView>
 
       <View
@@ -201,72 +278,138 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F2F2F7',
   },
-  content: {
-    padding: 16,
-    gap: 16,
+  scroll: {
+    flex: 1,
   },
-  section: {
-    padding: 16,
+  content: {
+    paddingHorizontal: 16,
+    paddingTop: 20,
+    paddingBottom: 24,
+  },
+  sectionTitle: {
+    marginTop: 12,
+    marginBottom: 8,
+    marginLeft: 12,
+    fontSize: 13,
+    fontWeight: '600',
+    letterSpacing: 0.2,
+    color: '#747B9A',
+  },
+  group: {
+    overflow: 'hidden',
     borderRadius: 16,
     backgroundColor: '#FFFFFF',
   },
-  label: {
-    marginBottom: 8,
-    fontSize: 17,
-    fontWeight: '600',
-    color: '#111111',
+  row: {
+    minHeight: 62,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
   },
-  input: {
-    minHeight: 48,
-    paddingHorizontal: 14,
-    borderRadius: 12,
+  rowPressed: {
     backgroundColor: '#F2F2F7',
+  },
+  rowDisabled: {
+    opacity: 0.4,
+  },
+  rowLabel: {
+    fontSize: 17,
+    fontWeight: '500',
+    color: '#111111',
+  },
+  rowValue: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 16,
+  },
+  nameInput: {
+    minWidth: 150,
+    flex: 1,
+    marginLeft: 16,
+    paddingVertical: 8,
     fontSize: 17,
     color: '#111111',
   },
-  hint: {
-    marginTop: 8,
-    fontSize: 13,
-    color: '#8E8E93',
+  secondaryValue: {
+    fontSize: 17,
+    color: '#747B9A',
+  },
+  chevron: {
+    marginLeft: 10,
+    fontSize: 32,
+    lineHeight: 34,
+    fontWeight: '300',
+    color: '#8E96B1',
+  },
+  separator: {
+    height: StyleSheet.hairlineWidth,
+    marginLeft: 16,
+    backgroundColor: '#D8D8DE',
+  },
+  colorValue: {
+    width: 30,
+    height: 30,
+    marginRight: 10,
+    borderRadius: 15,
+  },
+  colorValueNeutral: {
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: '#C7C7CC',
+    backgroundColor: '#E5E5EA',
   },
   error: {
     marginTop: 8,
+    marginLeft: 12,
     fontSize: 13,
     color: '#FF3B30',
   },
-  colors: {
+  weekdays: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
   },
-  color: {
-    width: 42,
-    height: 42,
+  weekday: {
+    alignItems: 'center',
+    gap: 8,
+  },
+  weekdayName: {
+    fontSize: 14,
+    color: '#747B9A',
+  },
+  weekdaySelected: {
+    width: 34,
+    height: 34,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 3,
-    borderColor: 'transparent',
-    borderRadius: 21,
+    borderRadius: 17,
+    backgroundColor: appColors.accent,
   },
-  selectedColor: {
-    borderColor: '#111111',
-  },
-  checkmark: {
-    fontSize: 20,
+  weekdayCheckmark: {
+    fontSize: 18,
+    lineHeight: 21,
     fontWeight: '700',
     color: '#FFFFFF',
   },
-  reminderSection: {
-    flexDirection: 'row',
+  helperText: {
+    marginTop: 8,
+    marginHorizontal: 12,
+    fontSize: 13,
+    lineHeight: 18,
+    color: '#747B9A',
+  },
+  switchContainer: {
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
   },
-  reminderText: {
-    flex: 1,
+  switchContainerIos: {
+    width: 51,
+    height: 31,
   },
-  reminderTime: {
-    fontSize: 15,
-    color: '#8E8E93',
+  reminderSwitchIos: {
+    width: 51,
+    height: 31,
   },
   footer: {
     paddingTop: 12,
@@ -276,11 +419,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   saveButton: {
-    minHeight: 52,
+    minHeight: 54,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 14,
-    backgroundColor: '#0A84FF',
+    borderRadius: 16,
+    backgroundColor: appColors.accent,
   },
   saveButtonDisabled: {
     opacity: 0.4,
