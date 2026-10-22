@@ -28,6 +28,11 @@ export type HabitsAction =
       archivedAt: string;
     }
   | {
+      type: 'habitRestored';
+      habitId: string;
+      startedOn: string;
+    }
+  | {
       type: 'habitDeleted';
       habitId: string;
     }
@@ -93,6 +98,35 @@ export function habitsReducer(
         ),
       };
     }
+
+    case 'habitRestored':
+      return {
+        ...state,
+        habits: state.habits.map(habit => {
+          if (
+            habit.id !== action.habitId ||
+            habit.activityPeriods.some(period => period.endedBefore === null)
+          ) {
+            return habit;
+          }
+
+          return {
+            ...habit,
+            reminder: {
+              ...habit.reminder,
+              isEnabled: false,
+            },
+            activityPeriods: [
+              ...habit.activityPeriods,
+              {
+                startedOn: action.startedOn,
+                endedBefore: null,
+                archivedAt: null,
+              },
+            ],
+          };
+        }),
+      };
 
     case 'habitDeleted':
       return {
