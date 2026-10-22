@@ -1,22 +1,64 @@
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigation, type NavigationProp } from '@react-navigation/native';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Platform, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useHabits } from '../features/habits/context/HabitsProvider';
+import { getHabitStreakStats } from '../features/habits/model/getHabitStreakStats';
+import { isHabitActive } from '../features/habits/model/isHabitActive';
 import { isHabitCompletedOn } from '../features/habits/model/isHabitCompletedOn';
 import { AddHabitButton } from '../features/habits/ui/AddHabitButton';
-import { HabitIcon } from '../features/habits/ui/HabitIcon';
-import type { RootStackParamList } from '../navigation/navigationTypes';
+import { TodayCompletionCelebration } from '../features/habits/ui/TodayCompletionCelebration';
+import { TodayEmptyState } from '../features/habits/ui/TodayEmptyState';
+import { TodayFilteredEmptyState } from '../features/habits/ui/TodayFilteredEmptyState';
+import { TodayHabitCard } from '../features/habits/ui/TodayHabitCard';
+import { TodayHabitFilters } from '../features/habits/ui/TodayHabitFilters';
+import { TodayProgressSummary } from '../features/habits/ui/TodayProgressSummary';
+import type { TodayHabitFilter } from '../features/habits/ui/todayHabitFilter';
+import type {
+  MainTabsParamList,
+  RootStackParamList,
+} from '../navigation/navigationTypes';
 import { getDateKey } from '../shared/date/getDateKey';
-import { appColors } from '../shared/theme/colors';
+import { useCurrentDate } from '../shared/date/useCurrentDate';
+
+const TAB_BAR_CONTENT_INSET = Platform.OS === 'ios' ? 72 : 64;
+const TAB_BAR_INDICATOR_INSET = Platform.OS === 'ios' ? 56 : 48;
 
 export function TodayScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<MainTabsParamList>>();
   const { state, dispatch } = useHabits();
   const insets = useSafeAreaInsets();
-  const today = new Date();
-  const todayKey = getDateKey(today);
-  const todayTitle = getTodayTitle(today);
+  const currentDate = useCurrentDate();
+  const todayKey = getDateKey(currentDate);
+  const [selectedFilter, setSelectedFilter] = useState<TodayHabitFilter>('all');
+  const [isCelebrationVisible, setIsCelebrationVisible] = useState(false);
+  const handleCelebrationDismiss = useCallback(() => {
+    setIsCelebrationVisible(false);
+  }, []);
+
+  const habitItems = useMemo(
+    () =>
+      state.habits.filter(isHabitActive).map(habit => ({
+        habit,
+        isCompleted: isHabitCompletedOn(state.completions, habit.id, todayKey),
+        streaks: getHabitStreakStats(habit, state.completions, todayKey),
+      })),
+    [state.habits, state.completions, todayKey],
+  );
+
+  const completedCount = habitItems.filter(item => item.isCompleted).length;
+  const remainingCount = habitItems.length - completedCount;
+  const filteredHabitItems = habitItems.filter(item => {
+    switch (selectedFilter) {
+      case 'remaining':
+        return !item.isCompleted;
+      case 'completed':
+        return item.isCompleted;
+      case 'all':
+        return true;
+    }
+  });
 
   function getRootNavigation() {
     return navigation.getParent<NavigationProp<RootStackParamList>>();
@@ -33,11 +75,21 @@ export function TodayScreen() {
   }
 
   function handleCompletionPress(habitId: string) {
+    const selectedHabit = habitItems.find(item => item.habit.id === habitId);
+    const isCompletingHabit =
+      selectedHabit !== undefined && !selectedHabit.isCompleted;
+    const completesDay =
+      isCompletingHabit && completedCount === habitItems.length - 1;
+
     dispatch({
       type: 'habitCompletionToggled',
       habitId,
-      completedOn: getDateKey(new Date()),
+      completedOn: todayKey,
     });
+
+    if (completesDay) {
+      setIsCelebrationVisible(true);
+    }
   }
 
   return (
@@ -52,109 +104,76 @@ export function TodayScreen() {
       >
         <View>
           <Text style={styles.headerTitle}>Сегодня</Text>
-          <Text style={styles.headerSubtitle}>{todayTitle}</Text>
+          <Text style={styles.headerSubtitle}>
+            {getTodayTitle(currentDate)}
+          </Text>
         </View>
 
         <AddHabitButton onPress={handleCreateHabitPress} />
       </View>
 
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.content}
-        contentInsetAdjustmentBehavior="automatic"
-      >
-        <View style={styles.habits}>
-          {state.habits.length === 0 ? (
-            <View style={styles.emptyState}>
-              <Text style={styles.emptyTitle}>Пока нет привычек</Text>
-
-              <Text style={styles.emptyDescription}>
-                Добавь первую привычку, которую хочешь выполнять каждый день.
-              </Text>
-            </View>
-          ) : (
-            state.habits.map(habit => {
-              const isCompleted = isHabitCompletedOn(
-                state.completions,
-                habit.id,
-                todayKey,
-              );
-              return (
-                <View
-                  key={habit.id}
-                  style={[
-                    styles.habitCard,
-                    isCompleted && styles.habitCardCompleted,
-                  ]}
-                >
-                  <Pressable
-                    accessibilityRole="button"
-                    accessibilityLabel={`Открыть привычку ${habit.name}`}
-                    onPress={() => handleHabitPress(habit.id)}
-                    style={({ pressed }) => [
-                      styles.habitDetailsButton,
-                      pressed && styles.habitButtonPressed,
-                    ]}
-                  >
-                    <View style={styles.habitIcon}>
-                      <HabitIcon
-                        name={habit.name}
-                        emoji={habit.emoji}
-                        color={habit.color}
-                      />
-                    </View>
-
-                    <View style={styles.habitContent}>
-                      <Text
-                        style={[
-                          styles.habitName,
-                          isCompleted && styles.habitNameCompleted,
-                        ]}
-                      >
-                        {habit.name}
-                      </Text>
-
-                      <Text style={styles.habitSchedule}>
-                        Каждый день
-                        {habit.reminder.isEnabled
-                          ? ` · ${habit.reminder.time}`
-                          : ''}
-                      </Text>
-                    </View>
-                  </Pressable>
-
-                  <Pressable
-                    accessibilityRole="checkbox"
-                    accessibilityLabel={
-                      isCompleted
-                        ? `${habit.name}: отменить выполнение сегодня`
-                        : `${habit.name}: выполнить сегодня`
-                    }
-                    accessibilityState={{ checked: isCompleted }}
-                    hitSlop={6}
-                    onPress={() => handleCompletionPress(habit.id)}
-                    style={({ pressed }) => [
-                      styles.completionButton,
-                      pressed && styles.habitButtonPressed,
-                    ]}
-                  >
-                    <View
-                      style={[
-                        styles.completionCircle,
-                        isCompleted && styles.completionCircleCompleted,
-                      ]}
-                    >
-                      {isCompleted ? (
-                        <Text style={styles.checkmark}>✓</Text>
-                      ) : null}
-                    </View>
-                  </Pressable>
-                </View>
-              );
-            })
-          )}
+      {habitItems.length === 0 ? (
+        <View style={styles.emptyStateContainer}>
+          <TodayEmptyState onCreateHabitPress={handleCreateHabitPress} />
         </View>
-      </ScrollView>
+      ) : (
+        <View style={styles.dashboard}>
+          <TodayProgressSummary
+            completedCount={completedCount}
+            totalCount={habitItems.length}
+          />
+
+          <TodayHabitFilters
+            selectedFilter={selectedFilter}
+            totalCount={habitItems.length}
+            remainingCount={remainingCount}
+            completedCount={completedCount}
+            onFilterChange={setSelectedFilter}
+          />
+
+          <Text style={styles.sectionTitle}>МОИ ПРИВЫЧКИ</Text>
+
+          <FlatList
+            style={styles.habitsList}
+            data={filteredHabitItems}
+            keyExtractor={item => item.habit.id}
+            renderItem={({ item, index }) => (
+              <TodayHabitCard
+                habit={item.habit}
+                isCompleted={item.isCompleted}
+                currentStreak={item.streaks.current}
+                bestStreak={item.streaks.best}
+                isFirst={index === 0}
+                isLast={index === filteredHabitItems.length - 1}
+                onPress={() => handleHabitPress(item.habit.id)}
+                onCompletionPress={() => handleCompletionPress(item.habit.id)}
+              />
+            )}
+            ListEmptyComponent={
+              <TodayFilteredEmptyState
+                filter={selectedFilter}
+                onShowAllPress={() => setSelectedFilter('all')}
+              />
+            }
+            contentContainerStyle={[
+              styles.habitsListContent,
+              {
+                paddingBottom: insets.bottom + TAB_BAR_CONTENT_INSET,
+              },
+              filteredHabitItems.length === 0 && styles.filteredEmptyContent,
+            ]}
+            scrollIndicatorInsets={{
+              bottom: insets.bottom + TAB_BAR_INDICATOR_INSET,
+            }}
+            showsVerticalScrollIndicator={false}
+          />
+        </View>
+      )}
+
+      <TodayCompletionCelebration
+        visible={isCelebrationVisible}
+        onDismiss={handleCelebrationDismiss}
+      />
     </View>
   );
 }
@@ -169,7 +188,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 24,
-    paddingBottom: 20,
+    paddingBottom: 10,
   },
   headerTitle: {
     fontSize: 44,
@@ -183,100 +202,32 @@ const styles = StyleSheet.create({
     lineHeight: 27,
     color: '#6C6C70',
   },
-  scroll: {
+  emptyStateContainer: {
     flex: 1,
+    paddingHorizontal: 16,
   },
-  content: {
+  dashboard: {
+    flex: 1,
+    paddingHorizontal: 16,
+  },
+  habitsList: {
+    flex: 1,
+    marginHorizontal: -16,
+  },
+  habitsListContent: {
+    paddingHorizontal: 16,
+  },
+  filteredEmptyContent: {
     flexGrow: 1,
-    padding: 16,
   },
-  habits: {
-    flex: 1,
-    gap: 12,
-  },
-  emptyState: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 32,
-  },
-  emptyTitle: {
-    marginBottom: 8,
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#111111',
-  },
-  emptyDescription: {
-    textAlign: 'center',
-    fontSize: 17,
-    lineHeight: 23,
-    color: '#8E8E93',
-  },
-  habitCard: {
-    minHeight: 76,
-    flexDirection: 'row',
-    alignItems: 'center',
-    overflow: 'hidden',
-    borderRadius: 16,
-    backgroundColor: '#FFFFFF',
-  },
-  habitCardCompleted: {
-    backgroundColor: '#EDF4FF',
-  },
-  habitDetailsButton: {
-    minHeight: 76,
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 16,
-    paddingLeft: 16,
-  },
-  habitButtonPressed: {
-    opacity: 0.65,
-  },
-  habitIcon: {
-    marginRight: 12,
-  },
-  habitContent: {
-    flex: 1,
-  },
-  habitName: {
-    fontSize: 18,
+  sectionTitle: {
+    marginTop: 28,
+    marginBottom: 10,
+    marginLeft: 8,
+    fontSize: 14,
     fontWeight: '600',
-    color: '#111111',
-  },
-  habitNameCompleted: {
+    letterSpacing: 0.2,
     color: '#6C6C70',
-  },
-  habitSchedule: {
-    marginTop: 4,
-    fontSize: 15,
-    color: '#8E8E93',
-  },
-  completionButton: {
-    width: 60,
-    minHeight: 76,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  completionCircle: {
-    width: 28,
-    height: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: '#C7C7CC',
-    borderRadius: 14,
-  },
-  completionCircleCompleted: {
-    borderColor: appColors.accent,
-    backgroundColor: appColors.accent,
-  },
-  checkmark: {
-    fontSize: 18,
-    lineHeight: 20,
-    fontWeight: '700',
-    color: '#FFFFFF',
   },
 });
 
