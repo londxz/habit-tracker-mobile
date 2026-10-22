@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ArchivedHabitsScreen } from '../screens/ArchivedHabitsScreen';
 import { EditHabitScreen } from '../screens/EditHabitScreen';
 import { HabitDetailsScreen } from '../screens/HabitDetailsScreen';
+import { ProgressDayDetailsScreen } from '../screens/ProgressDayDetailsScreen';
 import { CreateHabitNavigator } from './CreateHabitNavigator';
 import { MainTabs } from './MainTabs';
 import type { RootStackParamList } from './navigationTypes';
@@ -47,6 +48,16 @@ export function RootNavigator() {
         name="ArchivedHabits"
         component={ArchivedHabitsScreen}
         options={{ title: 'Архив' }}
+      />
+
+      <Stack.Screen
+        name="ProgressDayDetails"
+        component={ProgressDayDetailsScreen}
+        options={{
+          headerShown: false,
+          presentation: 'pageSheet',
+          contentStyle: { backgroundColor: '#F2F2F7' },
+        }}
       />
     </Stack.Navigator>
   );
