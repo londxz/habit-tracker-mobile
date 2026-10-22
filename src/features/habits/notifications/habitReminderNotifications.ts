@@ -8,6 +8,7 @@ import notifee, {
 } from '@notifee/react-native';
 import { Linking, Platform } from 'react-native';
 
+import type { HabitWeekday } from '../model/habitTypes';
 import {
   savePendingHabitReminderPress,
   takePendingHabitReminderPress,
@@ -18,6 +19,7 @@ export type HabitReminderSchedule = {
   name: string;
   emoji: string | null;
   time: string;
+  weekdays: HabitWeekday[];
 };
 
 export interface HabitReminderNotifications {
@@ -111,7 +113,11 @@ async function syncHabitReminderSchedules(
   schedules: HabitReminderSchedule[],
 ): Promise<void> {
   const desiredNotificationIds = new Set(
-    schedules.map(schedule => getNotificationId(schedule.habitId)),
+    schedules.flatMap(schedule =>
+      schedule.weekdays.map(weekday =>
+        getNotificationId(schedule.habitId, weekday),
+      ),
+    ),
   );
   const scheduledNotificationIds = await notifee.getTriggerNotificationIds();
   const obsoleteNotificationIds = scheduledNotificationIds.filter(
@@ -149,38 +155,42 @@ async function scheduleHabitReminder(
   schedule: HabitReminderSchedule,
   channelId: string,
 ): Promise<void> {
-  const trigger: TimestampTrigger = {
-    type: TriggerType.TIMESTAMP,
-    timestamp: getNextReminderTimestamp(schedule.time),
-    repeatFrequency: RepeatFrequency.DAILY,
-  };
+  await Promise.all(
+    schedule.weekdays.map(weekday => {
+      const trigger: TimestampTrigger = {
+        type: TriggerType.TIMESTAMP,
+        timestamp: getNextReminderTimestamp(schedule.time, weekday),
+        repeatFrequency: RepeatFrequency.WEEKLY,
+      };
 
-  await notifee.createTriggerNotification(
-    {
-      id: getNotificationId(schedule.habitId),
-      title: getNotificationTitle(schedule),
-      body: 'Пора выполнить привычку',
-      data: { habitId: schedule.habitId },
-      android: {
-        channelId,
-        pressAction: { id: 'default' },
-      },
-      ios: {
-        sound: 'default',
-        foregroundPresentationOptions: {
-          banner: true,
-          list: true,
-          sound: true,
-          badge: false,
+      return notifee.createTriggerNotification(
+        {
+          id: getNotificationId(schedule.habitId, weekday),
+          title: getNotificationTitle(schedule),
+          body: 'Пора выполнить привычку',
+          data: { habitId: schedule.habitId },
+          android: {
+            channelId,
+            pressAction: { id: 'default' },
+          },
+          ios: {
+            sound: 'default',
+            foregroundPresentationOptions: {
+              banner: true,
+              list: true,
+              sound: true,
+              badge: false,
+            },
+          },
         },
-      },
-    },
-    trigger,
+        trigger,
+      );
+    }),
   );
 }
 
-function getNotificationId(habitId: string): string {
-  return `${NOTIFICATION_ID_PREFIX}${habitId}`;
+function getNotificationId(habitId: string, weekday: HabitWeekday): string {
+  return `${NOTIFICATION_ID_PREFIX}${habitId}-${weekday}`;
 }
 
 function getNotificationTitle(schedule: HabitReminderSchedule): string {
@@ -189,15 +199,18 @@ function getNotificationTitle(schedule: HabitReminderSchedule): string {
     : `${schedule.emoji} ${schedule.name}`;
 }
 
-function getNextReminderTimestamp(time: string): number {
+function getNextReminderTimestamp(time: string, weekday: HabitWeekday): number {
   const [hours, minutes] = time.split(':').map(Number);
   const now = new Date();
   const reminderDate = new Date(now);
+  const targetDay = weekday === 7 ? 0 : weekday;
+  const daysUntilTarget = (targetDay - now.getDay() + 7) % 7;
 
+  reminderDate.setDate(reminderDate.getDate() + daysUntilTarget);
   reminderDate.setHours(hours, minutes, 0, 0);
 
   if (reminderDate.getTime() <= now.getTime()) {
-    reminderDate.setDate(reminderDate.getDate() + 1);
+    reminderDate.setDate(reminderDate.getDate() + 7);
   }
 
   return reminderDate.getTime();

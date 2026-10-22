@@ -53,6 +53,9 @@ export function CreateHabitScreen({ navigation }: CreateHabitScreenProps) {
         name: validationResult.name,
         emoji: draft.emoji.trim() || null,
         color: draft.color,
+        schedule: {
+          weekdays: draft.weekdays,
+        },
         reminder: {
           isEnabled: draft.isReminderEnabled,
           time: draft.reminderTime,
@@ -84,6 +87,7 @@ export function CreateHabitScreen({ navigation }: CreateHabitScreenProps) {
         name={draft.name}
         emoji={draft.emoji || null}
         color={draft.color}
+        weekdays={draft.weekdays}
         isReminderEnabled={draft.isReminderEnabled}
         reminderTime={draft.reminderTime}
       />

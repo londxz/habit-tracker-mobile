@@ -6,6 +6,7 @@ import type {
   HabitColor,
   HabitCompletion,
   HabitReminder,
+  HabitSchedule,
   HabitsState,
 } from '../model/habitTypes';
 
@@ -14,13 +15,13 @@ export interface HabitsStorage {
   save(state: HabitsState): void;
 }
 
-type StoredHabitsStateV1 = {
-  version: 1;
+type StoredHabitsStateV2 = {
+  version: 2;
   state: HabitsState;
 };
 
 const HABITS_STATE_KEY = 'habitsState';
-const HABITS_STORAGE_VERSION = 1;
+const HABITS_STORAGE_VERSION = 2;
 
 const storage = createMMKV({
   id: 'habits',
@@ -37,6 +38,14 @@ export const habitsStorage: HabitsStorage = {
 
       const storedState: unknown = JSON.parse(serializedState);
 
+      if (
+        isRecord(storedState) &&
+        storedState.version !== HABITS_STORAGE_VERSION
+      ) {
+        storage.remove(HABITS_STATE_KEY);
+        return null;
+      }
+
       return restoreHabitsState(storedState);
     } catch {
       return null;
@@ -44,7 +53,7 @@ export const habitsStorage: HabitsStorage = {
   },
 
   save(state) {
-    const storedState: StoredHabitsStateV1 = {
+    const storedState: StoredHabitsStateV2 = {
       version: HABITS_STORAGE_VERSION,
       state,
     };
@@ -59,7 +68,7 @@ function restoreHabitsState(value: unknown): HabitsState | null {
   }
 
   switch (value.version) {
-    case 1:
+    case 2:
       if (!isHabitsState(value.state)) {
         return null;
       }
@@ -97,11 +106,16 @@ function isHabit(value: unknown): value is Habit {
     (typeof value.emoji === 'string' || value.emoji === null) &&
     isHabitColor(value.color) &&
     typeof value.createdAt === 'string' &&
+    isHabitSchedule(value.schedule) &&
     isHabitReminder(value.reminder) &&
     Array.isArray(value.activityPeriods) &&
     value.activityPeriods.length > 0 &&
     value.activityPeriods.every(isActivityPeriod)
   );
+}
+
+function isHabitSchedule(value: unknown): value is HabitSchedule {
+  return isRecord(value) && isWeekdayList(value.weekdays);
 }
 
 function isHabitColor(value: unknown): value is HabitColor | null {
@@ -129,7 +143,8 @@ function isActivityPeriod(value: unknown): value is HabitActivityPeriod {
   if (
     !isRecord(value) ||
     typeof value.startedOn !== 'string' ||
-    !isDateKey(value.startedOn)
+    !isDateKey(value.startedOn) ||
+    !isWeekdayList(value.weekdays)
   ) {
     return false;
   }
@@ -138,7 +153,19 @@ function isActivityPeriod(value: unknown): value is HabitActivityPeriod {
     (value.endedBefore === null && value.archivedAt === null) ||
     (typeof value.endedBefore === 'string' &&
       isDateKey(value.endedBefore) &&
-      typeof value.archivedAt === 'string')
+      (typeof value.archivedAt === 'string' || value.archivedAt === null))
+  );
+}
+
+function isWeekdayList(value: unknown): value is HabitSchedule['weekdays'] {
+  return (
+    Array.isArray(value) &&
+    value.length > 0 &&
+    value.length <= 7 &&
+    value.every(
+      weekday => Number.isInteger(weekday) && weekday >= 1 && weekday <= 7,
+    ) &&
+    new Set(value).size === value.length
   );
 }
 

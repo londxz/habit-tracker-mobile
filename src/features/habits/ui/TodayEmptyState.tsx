@@ -4,11 +4,13 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { appColors } from '../../../shared/theme/colors';
 
 type TodayEmptyStateProps = {
+  hasActiveHabits: boolean;
   hasArchivedHabits: boolean;
   onCreateHabitPress: () => void;
 };
 
 export function TodayEmptyState({
+  hasActiveHabits,
   hasArchivedHabits,
   onCreateHabitPress,
 }: TodayEmptyStateProps) {
@@ -20,10 +22,16 @@ export function TodayEmptyState({
         color={appColors.textTertiary}
       />
       <Text style={styles.title}>
-        {hasArchivedHabits ? 'Нет активных привычек' : 'Привычек пока нет'}
+        {hasActiveHabits
+          ? 'На сегодня всё свободно'
+          : hasArchivedHabits
+          ? 'Нет активных привычек'
+          : 'Привычек пока нет'}
       </Text>
       <Text style={styles.description}>
-        {hasArchivedHabits
+        {hasActiveHabits
+          ? 'Привычки появятся здесь в выбранные дни расписания.'
+          : hasArchivedHabits
           ? 'Создайте новую привычку или восстановите завершённую из архива.'
           : 'Создайте первую привычку, чтобы начать отслеживать прогресс.'}
       </Text>

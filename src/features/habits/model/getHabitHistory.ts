@@ -1,5 +1,6 @@
 import { getAdjacentDateKey } from '../../../shared/date/getAdjacentDateKey';
 import type { Habit, HabitCompletion } from './habitTypes';
+import { isHabitPlannedOn } from './isHabitPlannedOn';
 
 export type HabitHistoryEntry = {
   dateKey: string;
@@ -24,7 +25,9 @@ export function getHabitHistory(
       dateKey <= lastDateKey;
       dateKey = getAdjacentDateKey(dateKey, 1)
     ) {
-      plannedDates.add(dateKey);
+      if (isHabitPlannedOn(habit, dateKey)) {
+        plannedDates.add(dateKey);
+      }
     }
   });
 

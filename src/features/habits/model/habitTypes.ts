@@ -4,6 +4,7 @@ export type Habit = {
   emoji: string | null;
   color: HabitColor | null;
   createdAt: string;
+  schedule: HabitSchedule;
   reminder: HabitReminder;
   activityPeriods: HabitActivityPeriod[];
 };
@@ -31,6 +32,12 @@ export type HabitReminder = {
   time: string;
 };
 
+export type HabitSchedule = {
+  weekdays: HabitWeekday[];
+};
+
+export type HabitWeekday = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+
 export type HabitActivityPeriod =
   | OpenHabitActivityPeriod
   | ClosedHabitActivityPeriod;
@@ -39,10 +46,12 @@ type OpenHabitActivityPeriod = {
   startedOn: string;
   endedBefore: null;
   archivedAt: null;
+  weekdays: HabitWeekday[];
 };
 
 type ClosedHabitActivityPeriod = {
   startedOn: string;
   endedBefore: string;
-  archivedAt: string;
+  archivedAt: string | null;
+  weekdays: HabitWeekday[];
 };

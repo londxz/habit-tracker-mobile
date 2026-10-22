@@ -2,6 +2,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { formatDayCount } from '../../../shared/localization/formatDayCount';
 import { appColors } from '../../../shared/theme/colors';
+import { getHabitScheduleTitle } from '../model/habitSchedule';
 import type { Habit } from '../model/habitTypes';
 import { HabitIcon } from './HabitIcon';
 
@@ -56,7 +57,12 @@ export function TodayHabitCard({
             {habit.name}
           </Text>
 
-          <Text numberOfLines={1} style={styles.subtitle}>
+          <Text
+            adjustsFontSizeToFit
+            minimumFontScale={0.85}
+            numberOfLines={1}
+            style={styles.subtitle}
+          >
             {getHabitSubtitle(habit, isCompleted, currentStreak, bestStreak)}
           </Text>
         </View>
@@ -99,18 +105,18 @@ function getHabitSubtitle(
   bestStreak: number,
 ): string {
   if (isCompleted) {
-    return `Выполнено сегодня · серия ${formatDayCount(currentStreak)}`;
+    return `Готово · ${formatDayCount(currentStreak)} подряд`;
   }
 
   if (bestStreak > 0) {
-    return `Лучший результат: ${formatDayCount(bestStreak)}`;
+    return `Рекорд · ${formatDayCount(bestStreak)}`;
   }
 
   if (habit.reminder.isEnabled) {
-    return `Напоминание в ${habit.reminder.time}`;
+    return `Напоминание · ${habit.reminder.time}`;
   }
 
-  return 'Каждый день';
+  return getHabitScheduleTitle(habit.schedule.weekdays);
 }
 
 const styles = StyleSheet.create({

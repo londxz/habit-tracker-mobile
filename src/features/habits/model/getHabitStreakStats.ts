@@ -1,5 +1,6 @@
 import { getAdjacentDateKey } from '../../../shared/date/getAdjacentDateKey';
 import type { Habit, HabitCompletion, HabitActivityPeriod } from './habitTypes';
+import { isHabitPlannedOn } from './isHabitPlannedOn';
 
 export type HabitStreakStats = {
   current: number;
@@ -36,12 +37,22 @@ function getCurrentStreak(
     return 0;
   }
 
-  let dateKey = completionDates.has(todayKey)
-    ? todayKey
-    : getAdjacentDateKey(todayKey, -1);
+  let dateKey =
+    isHabitPlannedOn(habit, todayKey) && !completionDates.has(todayKey)
+      ? getAdjacentDateKey(todayKey, -1)
+      : todayKey;
   let streak = 0;
 
-  while (dateKey >= activePeriod.startedOn && completionDates.has(dateKey)) {
+  while (dateKey >= activePeriod.startedOn) {
+    if (!isHabitPlannedOn(habit, dateKey)) {
+      dateKey = getAdjacentDateKey(dateKey, -1);
+      continue;
+    }
+
+    if (!completionDates.has(dateKey)) {
+      break;
+    }
+
     streak += 1;
     dateKey = getAdjacentDateKey(dateKey, -1);
   }
@@ -58,40 +69,38 @@ function getBestStreak(
     (bestStreak, period) =>
       Math.max(
         bestStreak,
-        getBestStreakForPeriod(period, completionDates, todayKey),
+        getBestStreakForPeriod(habit, period, completionDates, todayKey),
       ),
     0,
   );
 }
 
 function getBestStreakForPeriod(
+  habit: Habit,
   period: HabitActivityPeriod,
   completionDates: Set<string>,
   todayKey: string,
 ): number {
-  const dates = [...completionDates]
-    .filter(
-      dateKey =>
-        dateKey >= period.startedOn &&
-        dateKey <= todayKey &&
-        (period.endedBefore === null || dateKey < period.endedBefore),
-    )
-    .sort();
-
   let bestStreak = 0;
   let currentStreak = 0;
-  let previousDateKey: string | null = null;
+  const lastDateKey =
+    period.endedBefore === null || period.endedBefore > todayKey
+      ? todayKey
+      : getAdjacentDateKey(period.endedBefore, -1);
 
-  dates.forEach(dateKey => {
-    currentStreak =
-      previousDateKey !== null &&
-      getAdjacentDateKey(previousDateKey, 1) === dateKey
-        ? currentStreak + 1
-        : 1;
+  for (
+    let dateKey = period.startedOn;
+    dateKey <= lastDateKey;
+    dateKey = getAdjacentDateKey(dateKey, 1)
+  ) {
+    if (!isHabitPlannedOn(habit, dateKey)) {
+      continue;
+    }
+
+    currentStreak = completionDates.has(dateKey) ? currentStreak + 1 : 0;
 
     bestStreak = Math.max(bestStreak, currentStreak);
-    previousDateKey = dateKey;
-  });
+  }
 
   return bestStreak;
 }
