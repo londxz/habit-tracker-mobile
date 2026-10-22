@@ -19,7 +19,9 @@ import {
 } from '../model/habitValidation';
 import { getHabitAccentColor, getHabitColorName } from './habitColors';
 import { HabitIcon } from './HabitIcon';
+import { ReminderTimePicker } from './ReminderTimePicker';
 import { appColors } from '../../../shared/theme/colors';
+import { useHabitReminderPermission } from '../notifications/useHabitReminderPermission';
 
 type HabitFormProps = {
   children?: ReactNode;
@@ -51,6 +53,8 @@ export function HabitForm({
   const insets = useSafeAreaInsets();
   const canSubmit = draft.name.trim().length > 0;
   const accentColor = getHabitAccentColor(draft.color);
+  const { isRequestingPermission, setReminderEnabled } =
+    useHabitReminderPermission();
 
   return (
     <KeyboardAvoidingView
@@ -165,10 +169,9 @@ export function HabitForm({
             >
               <Switch
                 accessibilityLabel="Напоминать"
+                disabled={isRequestingPermission}
                 value={draft.isReminderEnabled}
-                onValueChange={value =>
-                  updateDraft({ isReminderEnabled: value })
-                }
+                onValueChange={setReminderEnabled}
                 style={
                   Platform.OS === 'ios' ? styles.reminderSwitchIos : undefined
                 }
@@ -182,7 +185,11 @@ export function HabitForm({
             style={[styles.row, !draft.isReminderEnabled && styles.rowDisabled]}
           >
             <Text style={styles.rowLabel}>Время</Text>
-            <Text style={styles.secondaryValue}>{draft.reminderTime}</Text>
+            <ReminderTimePicker
+              value={draft.reminderTime}
+              disabled={!draft.isReminderEnabled}
+              onChange={reminderTime => updateDraft({ reminderTime })}
+            />
           </View>
         </View>
 
