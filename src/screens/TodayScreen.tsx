@@ -8,6 +8,7 @@ import { doesCompletionFinishDay } from '../features/habits/model/doesCompletion
 import { getHabitStreakStats } from '../features/habits/model/getHabitStreakStats';
 import { isHabitActive } from '../features/habits/model/isHabitActive';
 import { isHabitCompletedOn } from '../features/habits/model/isHabitCompletedOn';
+import { isHabitPlannedOn } from '../features/habits/model/isHabitPlannedOn';
 import { AddHabitButton } from '../features/habits/ui/AddHabitButton';
 import { TodayCompletionCelebration } from '../features/habits/ui/TodayCompletionCelebration';
 import { TodayEmptyState } from '../features/habits/ui/TodayEmptyState';
@@ -40,14 +41,24 @@ export function TodayScreen() {
     setIsCelebrationVisible(false);
   }, []);
 
+  const activeHabits = useMemo(
+    () => state.habits.filter(isHabitActive),
+    [state.habits],
+  );
   const habitItems = useMemo(
     () =>
-      state.habits.filter(isHabitActive).map(habit => ({
-        habit,
-        isCompleted: isHabitCompletedOn(state.completions, habit.id, todayKey),
-        streaks: getHabitStreakStats(habit, state.completions, todayKey),
-      })),
-    [state.habits, state.completions, todayKey],
+      activeHabits
+        .filter(habit => isHabitPlannedOn(habit, todayKey))
+        .map(habit => ({
+          habit,
+          isCompleted: isHabitCompletedOn(
+            state.completions,
+            habit.id,
+            todayKey,
+          ),
+          streaks: getHabitStreakStats(habit, state.completions, todayKey),
+        })),
+    [activeHabits, state.completions, todayKey],
   );
 
   const completedCount = habitItems.filter(item => item.isCompleted).length;
@@ -124,6 +135,7 @@ export function TodayScreen() {
       {habitItems.length === 0 ? (
         <View style={styles.emptyStateContainer}>
           <TodayEmptyState
+            hasActiveHabits={activeHabits.length > 0}
             hasArchivedHabits={state.habits.length > 0}
             onCreateHabitPress={handleCreateHabitPress}
           />

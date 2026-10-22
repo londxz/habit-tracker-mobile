@@ -91,6 +91,7 @@ export function HabitIconPickerScreen() {
           name={draft.name}
           emoji={draft.emoji || null}
           color={draft.color}
+          weekdays={draft.weekdays}
           isReminderEnabled={draft.isReminderEnabled}
           reminderTime={draft.reminderTime}
         />

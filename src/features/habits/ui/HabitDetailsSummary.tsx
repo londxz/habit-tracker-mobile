@@ -8,6 +8,7 @@ import { HabitIdentity } from './HabitIdentity';
 type HabitDetailsSummaryProps = {
   habit: Habit;
   isActive: boolean;
+  isPlannedToday: boolean;
   isCompletedToday: boolean;
   currentStreak: number;
   bestStreak: number;
@@ -20,6 +21,7 @@ type HabitDetailsSummaryProps = {
 export function HabitDetailsSummary({
   habit,
   isActive,
+  isPlannedToday,
   isCompletedToday,
   currentStreak,
   bestStreak,
@@ -35,29 +37,42 @@ export function HabitDetailsSummary({
       {isActive ? (
         <Pressable
           accessibilityRole="checkbox"
-          accessibilityState={{ checked: isCompletedToday }}
+          accessibilityState={{
+            checked: isCompletedToday,
+            disabled: !isPlannedToday,
+          }}
+          disabled={!isPlannedToday}
           onPress={onCompletionPress}
           style={({ pressed }) => [
             styles.todayCard,
             isCompletedToday && styles.todayCardCompleted,
+            !isPlannedToday && styles.todayCardDisabled,
             pressed && styles.pressed,
           ]}
         >
           <View>
             <Text style={styles.todayLabel}>СЕГОДНЯ</Text>
             <Text style={styles.todayStatus}>
-              {isCompletedToday ? 'Выполнено' : 'Не выполнено'}
+              {!isPlannedToday
+                ? 'Не запланировано'
+                : isCompletedToday
+                ? 'Выполнено'
+                : 'Не выполнено'}
             </Text>
           </View>
 
-          <View
-            style={[
-              styles.completionCircle,
-              isCompletedToday && styles.completionCircleCompleted,
-            ]}
-          >
-            {isCompletedToday ? <Text style={styles.checkmark}>✓</Text> : null}
-          </View>
+          {isPlannedToday ? (
+            <View
+              style={[
+                styles.completionCircle,
+                isCompletedToday && styles.completionCircleCompleted,
+              ]}
+            >
+              {isCompletedToday ? (
+                <Text style={styles.checkmark}>✓</Text>
+              ) : null}
+            </View>
+          ) : null}
         </Pressable>
       ) : null}
 
@@ -100,6 +115,9 @@ const styles = StyleSheet.create({
   },
   todayCardCompleted: {
     backgroundColor: appColors.selectedSurface,
+  },
+  todayCardDisabled: {
+    opacity: 0.65,
   },
   todayLabel: {
     fontSize: 14,

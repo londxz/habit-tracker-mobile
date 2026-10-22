@@ -11,6 +11,7 @@ import { getHabitHistory } from '../features/habits/model/getHabitHistory';
 import { getHabitStreakStats } from '../features/habits/model/getHabitStreakStats';
 import { isHabitActive } from '../features/habits/model/isHabitActive';
 import { isHabitCompletedOn } from '../features/habits/model/isHabitCompletedOn';
+import { isHabitPlannedOn } from '../features/habits/model/isHabitPlannedOn';
 import { ArchivedHabitActions } from '../features/habits/ui/ArchivedHabitActions';
 import { ArchivedHabitDetailsSummary } from '../features/habits/ui/ArchivedHabitDetailsSummary';
 import { HabitDetailsSummary } from '../features/habits/ui/HabitDetailsSummary';
@@ -106,6 +107,7 @@ export function HabitDetailsScreen({
     habit.id,
     todayKey,
   );
+  const isPlannedToday = isHabitPlannedOn(habit, todayKey);
   const habitId = habit.id;
   const lastVisibleDate =
     active || archivedAt === null ? currentDate : new Date(archivedAt);
@@ -117,6 +119,10 @@ export function HabitDetailsScreen({
   const canOpenNextMonth = visibleMonth < lastVisibleMonth;
 
   function handleCompletionPress() {
+    if (!isPlannedToday) {
+      return;
+    }
+
     const completesDay = doesCompletionFinishDay(
       state.habits,
       state.completions,
@@ -212,6 +218,7 @@ export function HabitDetailsScreen({
               <HabitDetailsSummary
                 habit={habit}
                 isActive={active}
+                isPlannedToday={isPlannedToday}
                 isCompletedToday={isCompletedToday}
                 currentStreak={streaks.current}
                 bestStreak={streaks.best}

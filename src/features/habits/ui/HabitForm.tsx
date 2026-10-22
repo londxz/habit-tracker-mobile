@@ -17,6 +17,11 @@ import {
   HABIT_NAME_MAX_LENGTH,
   type HabitNameValidationError,
 } from '../model/habitValidation';
+import {
+  getHabitScheduleTitle,
+  habitWeekdayOptions,
+} from '../model/habitSchedule';
+import type { HabitWeekday } from '../model/habitTypes';
 import { getHabitAccentColor, getHabitColorName } from './habitColors';
 import { HabitIcon } from './HabitIcon';
 import { ReminderTimePicker } from './ReminderTimePicker';
@@ -37,8 +42,6 @@ type HabitFormProps = {
   onSubmit: () => void;
 };
 
-const weekdays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
-
 export function HabitForm({
   children,
   nameError,
@@ -55,6 +58,24 @@ export function HabitForm({
   const accentColor = getHabitAccentColor(draft.color);
   const { isRequestingPermission, setReminderEnabled } =
     useHabitReminderPermission();
+
+  function toggleWeekday(weekday: HabitWeekday) {
+    if (!draft.isReminderEnabled) {
+      return;
+    }
+
+    const isSelected = draft.weekdays.includes(weekday);
+
+    if (isSelected && draft.weekdays.length === 1) {
+      return;
+    }
+
+    updateDraft({
+      weekdays: isSelected
+        ? draft.weekdays.filter(value => value !== weekday)
+        : [...draft.weekdays, weekday].sort((first, second) => first - second),
+    });
+  }
 
   return (
     <KeyboardAvoidingView
@@ -138,22 +159,63 @@ export function HabitForm({
         <Text style={styles.sectionTitle}>РАСПИСАНИЕ</Text>
 
         <View style={styles.group}>
-          <View style={styles.row}>
+          <View
+            style={[
+              styles.row,
+              !draft.isReminderEnabled && styles.rowDisabled,
+            ]}
+          >
             <Text style={styles.rowLabel}>Повторять</Text>
-            <Text style={styles.secondaryValue}>Каждый день</Text>
+            <Text style={styles.secondaryValue}>
+              {getHabitScheduleTitle(draft.weekdays)}
+            </Text>
           </View>
 
           <View style={styles.separator} />
 
-          <View style={styles.weekdays}>
-            {weekdays.map(day => (
-              <View key={day} style={styles.weekday}>
-                <Text style={styles.weekdayName}>{day}</Text>
-                <View style={styles.weekdaySelected}>
-                  <Text style={styles.weekdayCheckmark}>✓</Text>
-                </View>
-              </View>
-            ))}
+          <View
+            style={[
+              styles.weekdays,
+              !draft.isReminderEnabled && styles.rowDisabled,
+            ]}
+          >
+            {habitWeekdayOptions.map(({ label, accessibilityLabel, value }) => {
+              const isSelected = draft.weekdays.includes(value);
+              const isOnlySelected = isSelected && draft.weekdays.length === 1;
+              const isDisabled =
+                !draft.isReminderEnabled || isOnlySelected;
+
+              return (
+                <Pressable
+                  key={value}
+                  accessibilityLabel={accessibilityLabel}
+                  accessibilityRole="checkbox"
+                  accessibilityState={{
+                    checked: isSelected,
+                    disabled: isDisabled,
+                  }}
+                  disabled={isDisabled}
+                  hitSlop={4}
+                  onPress={() => toggleWeekday(value)}
+                  style={({ pressed }) => [
+                    styles.weekday,
+                    pressed && styles.weekdayPressed,
+                  ]}
+                >
+                  <Text style={styles.weekdayName}>{label}</Text>
+                  <View
+                    style={[
+                      styles.weekdayControl,
+                      isSelected && styles.weekdayControlSelected,
+                    ]}
+                  >
+                    {isSelected ? (
+                      <Text style={styles.weekdayCheckmark}>✓</Text>
+                    ) : null}
+                  </View>
+                </Pressable>
+              );
+            })}
           </View>
         </View>
 
@@ -348,16 +410,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
   },
+  weekdayPressed: {
+    opacity: 0.6,
+  },
   weekdayName: {
     fontSize: 14,
     color: appColors.textSecondary,
   },
-  weekdaySelected: {
+  weekdayControl: {
     width: 34,
     height: 34,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: appColors.border,
     borderRadius: 17,
+  },
+  weekdayControlSelected: {
+    borderColor: appColors.accent,
     backgroundColor: appColors.accent,
   },
   weekdayCheckmark: {

@@ -2,6 +2,7 @@ import { getAdjacentDateKey } from '../../../shared/date/getAdjacentDateKey';
 import type { Habit, HabitsState } from './habitTypes';
 import { normalizeHabitName } from './habitValidation';
 import { isHabitCompletedOn } from './isHabitCompletedOn';
+import { isHabitPlannedOn } from './isHabitPlannedOn';
 
 export const initialHabitsState: HabitsState = {
   habits: [],
@@ -20,7 +21,11 @@ export type HabitsAction =
   | {
       type: 'habitUpdated';
       habitId: string;
-      changes: Pick<Habit, 'name' | 'emoji' | 'color' | 'reminder'>;
+      changes: Pick<
+        Habit,
+        'name' | 'emoji' | 'color' | 'schedule' | 'reminder'
+      >;
+      updatedOn: string;
     }
   | {
       type: 'habitArchived';
@@ -80,9 +85,24 @@ export function habitsReducer(
 
       return {
         ...state,
-        habits: state.habits.map(habit =>
-          habit.id === action.habitId ? { ...habit, ...action.changes } : habit,
-        ),
+        habits: state.habits.map(habit => {
+          if (habit.id !== action.habitId) {
+            return habit;
+          }
+
+          const activityPeriods = areWeekdaysEqual(
+            habit.schedule.weekdays,
+            action.changes.schedule.weekdays,
+          )
+            ? habit.activityPeriods
+            : updateSchedulePeriods(
+                habit.activityPeriods,
+                action.changes.schedule.weekdays,
+                action.updatedOn,
+              );
+
+          return { ...habit, ...action.changes, activityPeriods };
+        }),
       };
 
     case 'habitArchived': {
@@ -143,6 +163,7 @@ export function habitsReducer(
                 startedOn: action.startedOn,
                 endedBefore: null,
                 archivedAt: null,
+                weekdays: habit.schedule.weekdays,
               },
             ],
           };
@@ -175,6 +196,12 @@ export function habitsReducer(
         };
       }
 
+      const habit = state.habits.find(item => item.id === action.habitId);
+
+      if (habit === undefined || !isHabitPlannedOn(habit, action.completedOn)) {
+        return state;
+      }
+
       return {
         ...state,
         completions: [
@@ -197,4 +224,48 @@ function areHabitNamesEqual(firstName: string, secondName: string): boolean {
     normalizeHabitName(firstName).toLocaleLowerCase() ===
     normalizeHabitName(secondName).toLocaleLowerCase()
   );
+}
+
+function areWeekdaysEqual(
+  first: Habit['schedule']['weekdays'],
+  second: Habit['schedule']['weekdays'],
+): boolean {
+  return (
+    first.length === second.length &&
+    first.every(weekday => second.includes(weekday))
+  );
+}
+
+function updateSchedulePeriods(
+  periods: Habit['activityPeriods'],
+  weekdays: Habit['schedule']['weekdays'],
+  updatedOn: string,
+): Habit['activityPeriods'] {
+  return periods.reduce<Habit['activityPeriods']>((updatedPeriods, period) => {
+    if (period.endedBefore !== null) {
+      updatedPeriods.push(period);
+      return updatedPeriods;
+    }
+
+    if (period.startedOn === updatedOn) {
+      updatedPeriods.push({ ...period, weekdays });
+      return updatedPeriods;
+    }
+
+    updatedPeriods.push(
+      {
+        ...period,
+        endedBefore: updatedOn,
+        archivedAt: null,
+      },
+      {
+        startedOn: updatedOn,
+        endedBefore: null,
+        archivedAt: null,
+        weekdays,
+      },
+    );
+
+    return updatedPeriods;
+  }, []);
 }

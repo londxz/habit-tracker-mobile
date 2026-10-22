@@ -65,10 +65,14 @@ export function EditHabitScreen({ navigation, route }: EditHabitScreenProps) {
     const didSave = dispatch({
       type: 'habitUpdated',
       habitId: habit.id,
+      updatedOn: getDateKey(currentDate),
       changes: {
         name: validationResult.name,
         emoji: draft.emoji.trim() || null,
         color: draft.color,
+        schedule: {
+          weekdays: draft.weekdays,
+        },
         reminder: {
           isEnabled: draft.isReminderEnabled,
           time: draft.reminderTime,
