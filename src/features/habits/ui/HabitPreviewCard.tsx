@@ -2,8 +2,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { appColors } from '../../../shared/theme/colors';
 
-import { getHabitScheduleTitle } from '../model/habitSchedule';
-import type { HabitColor, HabitWeekday } from '../model/habitTypes';
+import type { HabitColor } from '../model/habitTypes';
 import { getHabitDisplayName } from './getHabitDisplayName';
 import { HabitIcon } from './HabitIcon';
 
@@ -11,7 +10,6 @@ type HabitPreviewCardProps = {
   name: string;
   emoji: string | null;
   color: HabitColor | null;
-  weekdays: HabitWeekday[];
   isReminderEnabled: boolean;
   reminderTime: string;
 };
@@ -20,7 +18,6 @@ export function HabitPreviewCard({
   name,
   emoji,
   color,
-  weekdays,
   isReminderEnabled,
   reminderTime,
 }: HabitPreviewCardProps) {
@@ -36,7 +33,7 @@ export function HabitPreviewCard({
         </Text>
 
         <Text style={styles.schedule}>
-          {getHabitScheduleTitle(weekdays)}
+          Каждый день
           {isReminderEnabled ? ` · ${reminderTime}` : ''}
         </Text>
       </View>

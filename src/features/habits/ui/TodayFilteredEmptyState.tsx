@@ -17,7 +17,7 @@ export function TodayFilteredEmptyState({
 
   return (
     <View style={styles.container}>
-      <Ionicons name={content.icon} size={68} color={appColors.accent} />
+      <Ionicons name={content.icon} size={56} color={appColors.accent} />
       <Text style={styles.title}>{content.title}</Text>
       <Text style={styles.description}>{content.description}</Text>
       <Pressable
@@ -58,12 +58,16 @@ function getEmptyStateContent(filter: TodayHabitFilter) {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    paddingTop: 52,
+    paddingTop: 32,
     paddingHorizontal: 24,
   },
   title: {
-    marginTop: 18,
-    fontSize: 24,
+    width: '100%',
+    maxWidth: 320,
+    marginTop: 14,
+    textAlign: 'center',
+    fontSize: 22,
+    lineHeight: 28,
     fontWeight: '700',
     color: appColors.textPrimary,
   },

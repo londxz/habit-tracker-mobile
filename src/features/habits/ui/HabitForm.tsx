@@ -5,28 +5,22 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  Switch,
   Text,
-  TextInput,
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { appColors } from '../../../shared/theme/colors';
 import { useHabitFormDraft } from '../context/HabitFormDraftProvider';
+import type { HabitWeekday } from '../model/habitTypes';
 import {
   HABIT_NAME_MAX_LENGTH,
   type HabitNameValidationError,
 } from '../model/habitValidation';
-import {
-  getHabitScheduleTitle,
-  habitWeekdayOptions,
-} from '../model/habitSchedule';
-import type { HabitWeekday } from '../model/habitTypes';
-import { getHabitAccentColor, getHabitColorName } from './habitColors';
-import { HabitIcon } from './HabitIcon';
-import { ReminderTimePicker } from './ReminderTimePicker';
-import { appColors } from '../../../shared/theme/colors';
 import { useHabitReminderPermission } from '../notifications/useHabitReminderPermission';
+import { HabitBasicsSection } from './HabitBasicsSection';
+import { HabitReminderSection } from './HabitReminderSection';
+import { HabitScheduleSection } from './HabitScheduleSection';
 
 type HabitFormProps = {
   children?: ReactNode;
@@ -54,10 +48,9 @@ export function HabitForm({
 }: HabitFormProps) {
   const { draft, updateDraft } = useHabitFormDraft();
   const insets = useSafeAreaInsets();
-  const canSubmit = draft.name.trim().length > 0;
-  const accentColor = getHabitAccentColor(draft.color);
   const { isRequestingPermission, setReminderEnabled } =
     useHabitReminderPermission();
+  const canSubmit = draft.name.trim().length > 0 && !isRequestingPermission;
 
   function toggleWeekday(weekday: HabitWeekday) {
     if (!draft.isReminderEnabled) {
@@ -87,178 +80,25 @@ export function HabitForm({
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
       >
-        <Text style={styles.sectionTitle}>ОСНОВНОЕ</Text>
+        <HabitBasicsSection
+          draft={draft}
+          errorMessage={getNameErrorMessage(nameError)}
+          onNameChange={onNameChange}
+          onIconPress={onIconPress}
+          onColorPress={onColorPress}
+        />
 
-        <View style={styles.group}>
-          <View style={styles.row}>
-            <Text style={styles.rowLabel}>Название</Text>
+        <HabitScheduleSection />
 
-            <TextInput
-              value={draft.name}
-              onChangeText={onNameChange}
-              placeholder="Введите"
-              placeholderTextColor={appColors.placeholder}
-              maxLength={HABIT_NAME_MAX_LENGTH}
-              returnKeyType="done"
-              textAlign="right"
-              style={styles.nameInput}
-            />
-          </View>
-
-          <View style={styles.separator} />
-
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Выбрать значок"
-            onPress={onIconPress}
-            style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}
-          >
-            <Text style={styles.rowLabel}>Значок</Text>
-
-            <View style={styles.rowValue}>
-              <HabitIcon
-                name={draft.name}
-                emoji={draft.emoji || null}
-                color={draft.color}
-                size={42}
-              />
-              <Text style={styles.chevron}>›</Text>
-            </View>
-          </Pressable>
-
-          <View style={styles.separator} />
-
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Выбрать цвет"
-            onPress={onColorPress}
-            style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}
-          >
-            <Text style={styles.rowLabel}>Цвет</Text>
-
-            <View style={styles.rowValue}>
-              <View
-                style={[
-                  styles.colorValue,
-                  { backgroundColor: accentColor },
-                  draft.color === null && styles.colorValueNeutral,
-                ]}
-              />
-              <Text style={styles.secondaryValue}>
-                {getHabitColorName(draft.color)}
-              </Text>
-              <Text style={styles.chevron}>›</Text>
-            </View>
-          </Pressable>
-        </View>
-
-        {nameError !== null ? (
-          <Text style={styles.error}>{getNameErrorMessage(nameError)}</Text>
-        ) : null}
-
-        <Text style={styles.sectionTitle}>РАСПИСАНИЕ</Text>
-
-        <View style={styles.group}>
-          <View
-            style={[
-              styles.row,
-              !draft.isReminderEnabled && styles.rowDisabled,
-            ]}
-          >
-            <Text style={styles.rowLabel}>Повторять</Text>
-            <Text style={styles.secondaryValue}>
-              {getHabitScheduleTitle(draft.weekdays)}
-            </Text>
-          </View>
-
-          <View style={styles.separator} />
-
-          <View
-            style={[
-              styles.weekdays,
-              !draft.isReminderEnabled && styles.rowDisabled,
-            ]}
-          >
-            {habitWeekdayOptions.map(({ label, accessibilityLabel, value }) => {
-              const isSelected = draft.weekdays.includes(value);
-              const isOnlySelected = isSelected && draft.weekdays.length === 1;
-              const isDisabled =
-                !draft.isReminderEnabled || isOnlySelected;
-
-              return (
-                <Pressable
-                  key={value}
-                  accessibilityLabel={accessibilityLabel}
-                  accessibilityRole="checkbox"
-                  accessibilityState={{
-                    checked: isSelected,
-                    disabled: isDisabled,
-                  }}
-                  disabled={isDisabled}
-                  hitSlop={4}
-                  onPress={() => toggleWeekday(value)}
-                  style={({ pressed }) => [
-                    styles.weekday,
-                    pressed && styles.weekdayPressed,
-                  ]}
-                >
-                  <Text style={styles.weekdayName}>{label}</Text>
-                  <View
-                    style={[
-                      styles.weekdayControl,
-                      isSelected && styles.weekdayControlSelected,
-                    ]}
-                  >
-                    {isSelected ? (
-                      <Text style={styles.weekdayCheckmark}>✓</Text>
-                    ) : null}
-                  </View>
-                </Pressable>
-              );
-            })}
-          </View>
-        </View>
-
-        <Text style={styles.sectionTitle}>НАПОМИНАНИЕ</Text>
-
-        <View style={styles.group}>
-          <View style={styles.row}>
-            <Text style={styles.rowLabel}>Напоминать</Text>
-            <View
-              style={[
-                styles.switchContainer,
-                Platform.OS === 'ios' && styles.switchContainerIos,
-              ]}
-            >
-              <Switch
-                accessibilityLabel="Напоминать"
-                disabled={isRequestingPermission}
-                value={draft.isReminderEnabled}
-                onValueChange={setReminderEnabled}
-                style={
-                  Platform.OS === 'ios' ? styles.reminderSwitchIos : undefined
-                }
-              />
-            </View>
-          </View>
-
-          <View style={styles.separator} />
-
-          <View
-            style={[styles.row, !draft.isReminderEnabled && styles.rowDisabled]}
-          >
-            <Text style={styles.rowLabel}>Время</Text>
-            <ReminderTimePicker
-              value={draft.reminderTime}
-              disabled={!draft.isReminderEnabled}
-              onChange={reminderTime => updateDraft({ reminderTime })}
-            />
-          </View>
-        </View>
-
-        <Text style={styles.helperText}>
-          Уведомление придёт локально на этом устройстве.
-        </Text>
+        <HabitReminderSection
+          isEnabled={draft.isReminderEnabled}
+          isRequestingPermission={isRequestingPermission}
+          time={draft.reminderTime}
+          weekdays={draft.weekdays}
+          onEnabledChange={setReminderEnabled}
+          onTimeChange={reminderTime => updateDraft({ reminderTime })}
+          onWeekdayToggle={toggleWeekday}
+        />
 
         {children}
       </ScrollView>
@@ -268,6 +108,7 @@ export function HabitForm({
       >
         <Pressable
           accessibilityRole="button"
+          accessibilityState={{ disabled: !canSubmit }}
           disabled={!canSubmit}
           onPress={onSubmit}
           style={({ pressed }) => [
@@ -279,7 +120,7 @@ export function HabitForm({
           <Text style={styles.saveButtonTitle}>{submitTitle}</Text>
         </Pressable>
 
-        {secondaryAction !== undefined ? (
+        {secondaryAction === undefined ? null : (
           <Pressable
             accessibilityRole="button"
             onPress={secondaryAction.onPress}
@@ -292,13 +133,15 @@ export function HabitForm({
               {secondaryAction.title}
             </Text>
           </Pressable>
-        ) : null}
+        )}
       </View>
     </KeyboardAvoidingView>
   );
 }
 
-function getNameErrorMessage(error: HabitNameValidationError): string {
+function getNameErrorMessage(
+  error: HabitNameValidationError | null,
+): string | null {
   switch (error) {
     case 'required':
       return 'Введите название привычки';
@@ -306,6 +149,8 @@ function getNameErrorMessage(error: HabitNameValidationError): string {
       return `Название не должно быть длиннее ${HABIT_NAME_MAX_LENGTH} символов`;
     case 'duplicate':
       return 'Привычка с таким названием уже существует';
+    case null:
+      return null;
   }
 }
 
@@ -321,139 +166,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 20,
     paddingBottom: 24,
-  },
-  sectionTitle: {
-    marginTop: 12,
-    marginBottom: 8,
-    marginLeft: 12,
-    fontSize: 13,
-    fontWeight: '600',
-    letterSpacing: 0.2,
-    color: appColors.textSecondary,
-  },
-  group: {
-    overflow: 'hidden',
-    borderRadius: 16,
-    backgroundColor: appColors.surface,
-  },
-  row: {
-    minHeight: 62,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-  },
-  rowPressed: {
-    backgroundColor: appColors.controlBackground,
-  },
-  rowDisabled: {
-    opacity: 0.4,
-  },
-  rowLabel: {
-    fontSize: 17,
-    fontWeight: '500',
-    color: appColors.textPrimary,
-  },
-  rowValue: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 16,
-  },
-  nameInput: {
-    minWidth: 150,
-    flex: 1,
-    marginLeft: 16,
-    paddingVertical: 8,
-    fontSize: 17,
-    color: appColors.textPrimary,
-  },
-  secondaryValue: {
-    fontSize: 17,
-    color: appColors.textSecondary,
-  },
-  chevron: {
-    marginLeft: 10,
-    fontSize: 32,
-    lineHeight: 34,
-    fontWeight: '300',
-    color: appColors.textTertiary,
-  },
-  separator: {
-    height: StyleSheet.hairlineWidth,
-    marginLeft: 16,
-    backgroundColor: appColors.separator,
-  },
-  colorValue: {
-    width: 30,
-    height: 30,
-    marginRight: 10,
-    borderRadius: 15,
-  },
-  colorValueNeutral: {
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: appColors.placeholder,
-    backgroundColor: appColors.controlBackground,
-  },
-  error: {
-    marginTop: 8,
-    marginLeft: 12,
-    fontSize: 13,
-    color: appColors.danger,
-  },
-  weekdays: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 14,
-    paddingVertical: 14,
-  },
-  weekday: {
-    alignItems: 'center',
-    gap: 8,
-  },
-  weekdayPressed: {
-    opacity: 0.6,
-  },
-  weekdayName: {
-    fontSize: 14,
-    color: appColors.textSecondary,
-  },
-  weekdayControl: {
-    width: 34,
-    height: 34,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: appColors.border,
-    borderRadius: 17,
-  },
-  weekdayControlSelected: {
-    borderColor: appColors.accent,
-    backgroundColor: appColors.accent,
-  },
-  weekdayCheckmark: {
-    fontSize: 18,
-    lineHeight: 21,
-    fontWeight: '700',
-    color: appColors.onAccent,
-  },
-  helperText: {
-    marginTop: 8,
-    marginHorizontal: 12,
-    fontSize: 13,
-    lineHeight: 18,
-    color: appColors.textSecondary,
-  },
-  switchContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  switchContainerIos: {
-    width: 51,
-    height: 31,
-  },
-  reminderSwitchIos: {
-    width: 51,
-    height: 31,
   },
   footer: {
     paddingTop: 12,

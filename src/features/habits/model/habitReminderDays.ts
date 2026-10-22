@@ -1,8 +1,8 @@
 import type { HabitWeekday } from './habitTypes';
 
-export const allHabitWeekdays: HabitWeekday[] = [1, 2, 3, 4, 5, 6, 7];
+export const allReminderWeekdays: HabitWeekday[] = [1, 2, 3, 4, 5, 6, 7];
 
-export const habitWeekdayOptions: Array<{
+export const reminderWeekdayOptions: Array<{
   label: string;
   accessibilityLabel: string;
   value: HabitWeekday;
@@ -16,14 +16,7 @@ export const habitWeekdayOptions: Array<{
   { label: 'Вс', accessibilityLabel: 'Воскресенье', value: 7 },
 ];
 
-export function getHabitWeekday(dateKey: string): HabitWeekday {
-  const [year, month, day] = dateKey.split('-').map(Number);
-  const weekday = new Date(year, month - 1, day).getDay();
-
-  return (weekday === 0 ? 7 : weekday) as HabitWeekday;
-}
-
-export function getHabitScheduleTitle(weekdays: HabitWeekday[]): string {
+export function getReminderDaysTitle(weekdays: HabitWeekday[]): string {
   if (weekdays.length === 7) {
     return 'Каждый день';
   }
@@ -42,7 +35,7 @@ export function getHabitScheduleTitle(weekdays: HabitWeekday[]): string {
     } в неделю`;
   }
 
-  return habitWeekdayOptions
+  return reminderWeekdayOptions
     .filter(option => weekdays.includes(option.value))
     .map(option => option.label)
     .join(', ');

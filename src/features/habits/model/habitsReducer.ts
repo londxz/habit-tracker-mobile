@@ -21,11 +21,7 @@ export type HabitsAction =
   | {
       type: 'habitUpdated';
       habitId: string;
-      changes: Pick<
-        Habit,
-        'name' | 'emoji' | 'color' | 'schedule' | 'reminder'
-      >;
-      updatedOn: string;
+      changes: Pick<Habit, 'name' | 'emoji' | 'color' | 'reminder'>;
     }
   | {
       type: 'habitArchived';
@@ -74,6 +70,7 @@ export function habitsReducer(
 
     case 'habitUpdated':
       if (
+        !state.habits.some(habit => habit.id === action.habitId) ||
         state.habits.some(
           habit =>
             habit.id !== action.habitId &&
@@ -90,22 +87,24 @@ export function habitsReducer(
             return habit;
           }
 
-          const activityPeriods = areWeekdaysEqual(
-            habit.schedule.weekdays,
-            action.changes.schedule.weekdays,
-          )
-            ? habit.activityPeriods
-            : updateSchedulePeriods(
-                habit.activityPeriods,
-                action.changes.schedule.weekdays,
-                action.updatedOn,
-              );
-
-          return { ...habit, ...action.changes, activityPeriods };
+          return { ...habit, ...action.changes };
         }),
       };
 
     case 'habitArchived': {
+      const habitToArchive = state.habits.find(
+        habit => habit.id === action.habitId,
+      );
+
+      if (
+        habitToArchive === undefined ||
+        !habitToArchive.activityPeriods.some(
+          period => period.endedBefore === null,
+        )
+      ) {
+        return state;
+      }
+
       const completedOnArchiveDay = isHabitCompletedOn(
         state.completions,
         action.habitId,
@@ -140,7 +139,20 @@ export function habitsReducer(
       };
     }
 
-    case 'habitRestored':
+    case 'habitRestored': {
+      const habitToRestore = state.habits.find(
+        habit => habit.id === action.habitId,
+      );
+
+      if (
+        habitToRestore === undefined ||
+        habitToRestore.activityPeriods.some(
+          period => period.endedBefore === null,
+        )
+      ) {
+        return state;
+      }
+
       return {
         ...state,
         habits: state.habits.map(habit => {
@@ -163,14 +175,18 @@ export function habitsReducer(
                 startedOn: action.startedOn,
                 endedBefore: null,
                 archivedAt: null,
-                weekdays: habit.schedule.weekdays,
               },
             ],
           };
         }),
       };
+    }
 
     case 'habitDeleted':
+      if (!state.habits.some(habit => habit.id === action.habitId)) {
+        return state;
+      }
+
       return {
         habits: state.habits.filter(habit => habit.id !== action.habitId),
         completions: state.completions.filter(
@@ -224,48 +240,4 @@ function areHabitNamesEqual(firstName: string, secondName: string): boolean {
     normalizeHabitName(firstName).toLocaleLowerCase() ===
     normalizeHabitName(secondName).toLocaleLowerCase()
   );
-}
-
-function areWeekdaysEqual(
-  first: Habit['schedule']['weekdays'],
-  second: Habit['schedule']['weekdays'],
-): boolean {
-  return (
-    first.length === second.length &&
-    first.every(weekday => second.includes(weekday))
-  );
-}
-
-function updateSchedulePeriods(
-  periods: Habit['activityPeriods'],
-  weekdays: Habit['schedule']['weekdays'],
-  updatedOn: string,
-): Habit['activityPeriods'] {
-  return periods.reduce<Habit['activityPeriods']>((updatedPeriods, period) => {
-    if (period.endedBefore !== null) {
-      updatedPeriods.push(period);
-      return updatedPeriods;
-    }
-
-    if (period.startedOn === updatedOn) {
-      updatedPeriods.push({ ...period, weekdays });
-      return updatedPeriods;
-    }
-
-    updatedPeriods.push(
-      {
-        ...period,
-        endedBefore: updatedOn,
-        archivedAt: null,
-      },
-      {
-        startedOn: updatedOn,
-        endedBefore: null,
-        archivedAt: null,
-        weekdays,
-      },
-    );
-
-    return updatedPeriods;
-  }, []);
 }

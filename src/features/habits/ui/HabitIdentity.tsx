@@ -2,7 +2,6 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { appColors } from '../../../shared/theme/colors';
 
-import { getHabitScheduleTitle } from '../model/habitSchedule';
 import type { Habit } from '../model/habitTypes';
 import { HabitIcon } from './HabitIcon';
 
@@ -40,13 +39,11 @@ function getScheduleTitle(
   habit: Habit,
   showsReminderTimeWhenDisabled: boolean,
 ): string {
-  const scheduleTitle = getHabitScheduleTitle(habit.schedule.weekdays);
-
   if (habit.reminder.isEnabled || showsReminderTimeWhenDisabled) {
-    return `${scheduleTitle} · ${habit.reminder.time}`;
+    return `Каждый день · ${habit.reminder.time}`;
   }
 
-  return scheduleTitle;
+  return 'Каждый день';
 }
 
 const styles = StyleSheet.create({

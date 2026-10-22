@@ -8,7 +8,6 @@ import { doesCompletionFinishDay } from '../features/habits/model/doesCompletion
 import { getHabitStreakStats } from '../features/habits/model/getHabitStreakStats';
 import { isHabitActive } from '../features/habits/model/isHabitActive';
 import { isHabitCompletedOn } from '../features/habits/model/isHabitCompletedOn';
-import { isHabitPlannedOn } from '../features/habits/model/isHabitPlannedOn';
 import { AddHabitButton } from '../features/habits/ui/AddHabitButton';
 import { TodayCompletionCelebration } from '../features/habits/ui/TodayCompletionCelebration';
 import { TodayEmptyState } from '../features/habits/ui/TodayEmptyState';
@@ -47,17 +46,11 @@ export function TodayScreen() {
   );
   const habitItems = useMemo(
     () =>
-      activeHabits
-        .filter(habit => isHabitPlannedOn(habit, todayKey))
-        .map(habit => ({
-          habit,
-          isCompleted: isHabitCompletedOn(
-            state.completions,
-            habit.id,
-            todayKey,
-          ),
-          streaks: getHabitStreakStats(habit, state.completions, todayKey),
-        })),
+      activeHabits.map(habit => ({
+        habit,
+        isCompleted: isHabitCompletedOn(state.completions, habit.id, todayKey),
+        streaks: getHabitStreakStats(habit, state.completions, todayKey),
+      })),
     [activeHabits, state.completions, todayKey],
   );
 

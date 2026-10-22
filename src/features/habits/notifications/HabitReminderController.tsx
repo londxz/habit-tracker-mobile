@@ -35,7 +35,7 @@ export function HabitReminderController({
           name: habit.name,
           emoji: habit.emoji,
           time: habit.reminder.time,
-          weekdays: habit.schedule.weekdays,
+          weekdays: habit.reminder.weekdays,
         })),
     [state.habits],
   );

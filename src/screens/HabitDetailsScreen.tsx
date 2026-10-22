@@ -43,7 +43,8 @@ export function HabitDetailsScreen({
   const todayKey = getDateKey(currentDate);
   const habit = state.habits.find(item => item.id === route.params.habitId);
   const active = habit !== undefined && isHabitActive(habit);
-  const archivedAt = habit === undefined ? null : getHabitArchivedAt(habit);
+  const archivedAt =
+    habit === undefined || active ? null : getHabitArchivedAt(habit);
   const archiveDateKey =
     archivedAt === null ? null : getDateKey(new Date(archivedAt));
   const [selectedView, setSelectedView] = useState<HistoryView>('calendar');

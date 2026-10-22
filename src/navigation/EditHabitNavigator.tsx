@@ -35,7 +35,7 @@ export function EditHabitNavigator({ route }: EditHabitNavigatorProps) {
         name: habit.name,
         emoji: habit.emoji ?? '',
         color: habit.color,
-        weekdays: habit.schedule.weekdays,
+        weekdays: habit.reminder.weekdays,
         isReminderEnabled: habit.reminder.isEnabled,
         reminderTime: habit.reminder.time,
       }
