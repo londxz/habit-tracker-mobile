@@ -1,115 +1,86 @@
+<div align="center">
+
 # Habit Tracker
 
-Кроссплатформенное мобильное приложение для отслеживания ежедневных привычек, разработанное на React Native.
+Мобильное приложение для ежедневных привычек: помогает планировать дела, отмечать выполнение и следить за прогрессом без регистрации и облачного аккаунта.
 
-## Статус проекта
+</div>
 
-Подготовлен базовый React Native-проект, который собирается и запускается на iOS и Android. Пользовательская функциональность находится в разработке.
+## Скриншоты
 
-## Технологии
+<table>
+  <tr>
+    <td align="center"><b>Сегодня</b><br><img src="docs/screenshots/today-light.png" width="240" alt="Экран Сегодня в светлой теме"></td>
+    <td align="center"><b>Тёмная тема</b><br><img src="docs/screenshots/today-dark.png" width="240" alt="Экран Сегодня в тёмной теме"></td>
+    <td align="center"><b>Завершение дня</b><br><img src="docs/screenshots/completion-celebration.png" width="240" alt="Анимация завершения дня"></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Новая привычка</b><br><img src="docs/screenshots/create-habit.png" width="240" alt="Создание привычки"></td>
+    <td align="center"><b>Редактирование</b><br><img src="docs/screenshots/edit-habit.png" width="240" alt="Редактирование привычки"></td>
+    <td align="center"><b>Детали</b><br><img src="docs/screenshots/habit-details.png" width="240" alt="Детали привычки"></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Календарь</b><br><img src="docs/screenshots/progress-calendar.png" width="240" alt="Календарь общего прогресса"></td>
+    <td align="center"><b>История</b><br><img src="docs/screenshots/progress-history.png" width="240" alt="История выполнения"></td>
+    <td align="center"><b>Архив</b><br><img src="docs/screenshots/archive.png" width="240" alt="Архив привычек"></td>
+  </tr>
+</table>
 
-- React Native 0.88
-- React 19
-- TypeScript 6
-- npm
-- Gradle
-- CocoaPods
+## Возможности
 
-## Требования
+- Создание ежедневных привычек с названием, эмодзи и цветом.
+- Отметка выполнения прямо на экране «Сегодня».
+- Фильтры всех, оставшихся и выполненных привычек.
+- Локальные напоминания в выбранные дни и время.
+- Текущая серия, личный рекорд и процент выполнения.
+- Общий календарь прогресса и история по дням.
+- Подробная статистика и календарь для каждой привычки.
+- Редактирование, завершение, восстановление и удаление привычек.
+- Анимация и тактильный отклик после выполнения всех дел на день.
+- Светлая и тёмная темы.
+- Локальное хранение данных на устройстве.
 
-Для локального запуска необходимы:
+## Запуск
 
-- Node.js 24.22.0
-- npm 11
-- JDK 17
-- Android SDK Platform 37
-- Android SDK Build-Tools 37.0.0
-- Xcode
-- Ruby и Bundler
+Требуется стандартное React Native-окружение: Node.js 24, npm 11, Xcode и CocoaPods для iOS, Android Studio и JDK 17 для Android.
 
-Подробная настройка окружения описана в официальной [документации React Native](https://reactnative.dev/docs/set-up-your-environment).
-
-## Установка
-
-Клонируйте репозиторий и перейдите в папку проекта:
+Клонируйте проект и установите зависимости:
 
 ```bash
 git clone https://github.com/londxz/habit-tracker-mobile.git
 cd habit-tracker-mobile
-```
-
-Установите JavaScript-зависимости:
-
-```bash
 npm ci
 ```
-
-Для iOS дополнительно установите Ruby-зависимости и CocoaPods:
-
-```bash
-bundle install
-cd ios
-bundle exec pod install
-cd ..
-```
-
-## Запуск
-
-Запустите Metro из корня проекта:
-
-```bash
-npm start
-```
-
-Оставьте Metro работающим и используйте отдельный терминал для запуска приложения.
 
 ### iOS
 
 ```bash
+bundle install
+bundle exec pod install --project-directory=ios
 npm run ios
 ```
 
 ### Android
 
-Посмотрите список доступных эмуляторов:
+Запустите первый установленный AVD:
 
 ```bash
-emulator -list-avds
+emulator -avd "$(emulator -list-avds | head -n 1)"
 ```
 
-Запустите нужный эмулятор:
+После загрузки эмулятора откройте второй терминал в корне проекта:
 
 ```bash
-emulator -avd <AVD_NAME>
-```
-
-После загрузки эмулятора проверьте подключение и запустите приложение из корня проекта:
-
-```bash
-adb devices
 npm run android
 ```
 
-Вместо эмулятора можно использовать физическое Android-устройство с включённой USB-отладкой.
+## Технологии
 
-## Проверка качества
-
-```bash
-npm run lint
-npx tsc --noEmit
-npm test -- --runInBand
-```
-
-Проект использует npm. Не создавайте `yarn.lock` и не устанавливайте зависимости через Yarn.
-
-## Структура проекта
-
-```text
-android/       нативный Android-проект
-ios/           нативный iOS-проект
-__tests__/     автоматические тесты
-App.tsx        корневой React-компонент
-index.js       точка регистрации приложения
-app.json       имя React Native-приложения
-package.json   зависимости и npm-команды
-```
+- React Native 0.88, React 19 и TypeScript 6
+- React Navigation: native stack и native bottom tabs
+- MMKV для локального хранения данных
+- Notifee для локальных уведомлений
+- React Native Haptic Feedback для тактильного отклика
+- React Native Vector Icons / Ionicons
+- Liquid Glass с безопасным fallback для неподдерживаемых платформ
+- CocoaPods и Gradle для нативных сборок
