@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigation, type NavigationProp } from '@react-navigation/native';
 import { FlatList, Platform, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -8,6 +8,7 @@ import { getHabitStreakStats } from '../features/habits/model/getHabitStreakStat
 import { isHabitActive } from '../features/habits/model/isHabitActive';
 import { isHabitCompletedOn } from '../features/habits/model/isHabitCompletedOn';
 import { AddHabitButton } from '../features/habits/ui/AddHabitButton';
+import { TodayCompletionCelebration } from '../features/habits/ui/TodayCompletionCelebration';
 import { TodayEmptyState } from '../features/habits/ui/TodayEmptyState';
 import { TodayFilteredEmptyState } from '../features/habits/ui/TodayFilteredEmptyState';
 import { TodayHabitCard } from '../features/habits/ui/TodayHabitCard';
@@ -31,6 +32,10 @@ export function TodayScreen() {
   const currentDate = useCurrentDate();
   const todayKey = getDateKey(currentDate);
   const [selectedFilter, setSelectedFilter] = useState<TodayHabitFilter>('all');
+  const [isCelebrationVisible, setIsCelebrationVisible] = useState(false);
+  const handleCelebrationDismiss = useCallback(() => {
+    setIsCelebrationVisible(false);
+  }, []);
 
   const habitItems = useMemo(
     () =>
@@ -70,11 +75,21 @@ export function TodayScreen() {
   }
 
   function handleCompletionPress(habitId: string) {
+    const selectedHabit = habitItems.find(item => item.habit.id === habitId);
+    const isCompletingHabit =
+      selectedHabit !== undefined && !selectedHabit.isCompleted;
+    const completesDay =
+      isCompletingHabit && completedCount === habitItems.length - 1;
+
     dispatch({
       type: 'habitCompletionToggled',
       habitId,
       completedOn: todayKey,
     });
+
+    if (completesDay) {
+      setIsCelebrationVisible(true);
+    }
   }
 
   return (
@@ -154,6 +169,11 @@ export function TodayScreen() {
           />
         </View>
       )}
+
+      <TodayCompletionCelebration
+        visible={isCelebrationVisible}
+        onDismiss={handleCelebrationDismiss}
+      />
     </View>
   );
 }
