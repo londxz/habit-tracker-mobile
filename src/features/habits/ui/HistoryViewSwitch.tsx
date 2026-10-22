@@ -1,21 +1,21 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-export type HabitDetailsView = 'calendar' | 'history';
+export type HistoryView = 'calendar' | 'history';
 
-type HabitDetailsViewSwitchProps = {
-  selectedView: HabitDetailsView;
-  onViewChange: (view: HabitDetailsView) => void;
+type HistoryViewSwitchProps = {
+  selectedView: HistoryView;
+  onViewChange: (view: HistoryView) => void;
 };
 
-const views: Array<{ value: HabitDetailsView; title: string }> = [
+const views: Array<{ value: HistoryView; title: string }> = [
   { value: 'calendar', title: 'Календарь' },
   { value: 'history', title: 'История' },
 ];
 
-export function HabitDetailsViewSwitch({
+export function HistoryViewSwitch({
   selectedView,
   onViewChange,
-}: HabitDetailsViewSwitchProps) {
+}: HistoryViewSwitchProps) {
   return (
     <View accessibilityRole="tablist" style={styles.container}>
       {views.map(view => {

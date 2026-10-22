@@ -8,6 +8,9 @@ export type RootStackParamList = {
     habitId: string;
   };
   ArchivedHabits: undefined;
+  ProgressDayDetails: {
+    dateKey: string;
+  };
 };
 
 export type MainTabsParamList = {

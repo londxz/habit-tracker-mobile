@@ -13,9 +13,9 @@ import { isHabitCompletedOn } from '../features/habits/model/isHabitCompletedOn'
 import { HabitDetailsSummary } from '../features/habits/ui/HabitDetailsSummary';
 import { TodayCompletionCelebration } from '../features/habits/ui/TodayCompletionCelebration';
 import {
-  HabitDetailsViewSwitch,
-  type HabitDetailsView,
-} from '../features/habits/ui/HabitDetailsViewSwitch';
+  HistoryViewSwitch,
+  type HistoryView,
+} from '../features/habits/ui/HistoryViewSwitch';
 import { HabitHistoryCalendar } from '../features/habits/ui/HabitHistoryCalendar';
 import { HabitHistoryRow } from '../features/habits/ui/HabitHistoryRow';
 import type { RootStackParamList } from '../navigation/navigationTypes';
@@ -38,8 +38,7 @@ export function HabitDetailsScreen({
   const todayKey = getDateKey(currentDate);
   const habit = state.habits.find(item => item.id === route.params.habitId);
   const active = habit !== undefined && isHabitActive(habit);
-  const [selectedView, setSelectedView] =
-    useState<HabitDetailsView>('calendar');
+  const [selectedView, setSelectedView] = useState<HistoryView>('calendar');
   const [visibleMonth, setVisibleMonth] = useState(
     () => new Date(currentDate.getFullYear(), currentDate.getMonth(), 1),
   );
@@ -165,7 +164,7 @@ export function HabitDetailsScreen({
               onCompletionPress={handleCompletionPress}
             />
 
-            <HabitDetailsViewSwitch
+            <HistoryViewSwitch
               selectedView={selectedView}
               onViewChange={setSelectedView}
             />
