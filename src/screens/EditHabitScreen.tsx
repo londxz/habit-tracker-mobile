@@ -19,6 +19,7 @@ import type {
 } from '../navigation/navigationTypes';
 import { getDateKey } from '../shared/date/getDateKey';
 import { useCurrentDate } from '../shared/date/useCurrentDate';
+import { appColors } from '../shared/theme/colors';
 
 type EditHabitScreenProps = NativeStackScreenProps<
   EditHabitStackParamList,
@@ -154,7 +155,11 @@ export function EditHabitScreen({ navigation, route }: EditHabitScreenProps) {
           pressed && styles.archiveActionPressed,
         ]}
       >
-        <Ionicons name="archive-outline" size={27} color="#747480" />
+        <Ionicons
+          name="archive-outline"
+          size={27}
+          color={appColors.textSecondary}
+        />
         <Text style={styles.archiveActionTitle}>Завершить привычку</Text>
         <Text style={styles.chevron}>›</Text>
       </Pressable>
@@ -174,7 +179,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     letterSpacing: 0.2,
-    color: '#747B9A',
+    color: appColors.textSecondary,
   },
   archiveAction: {
     minHeight: 64,
@@ -182,39 +187,39 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     borderRadius: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: appColors.surface,
   },
   archiveActionPressed: {
-    backgroundColor: '#E5E5EA',
+    backgroundColor: appColors.controlBackground,
   },
   archiveActionTitle: {
     flex: 1,
     marginLeft: 14,
     fontSize: 17,
-    color: '#111111',
+    color: appColors.textPrimary,
   },
   chevron: {
     fontSize: 32,
     lineHeight: 34,
     fontWeight: '300',
-    color: '#8E96B1',
+    color: appColors.textTertiary,
   },
   helperText: {
     marginTop: 8,
     marginHorizontal: 12,
     fontSize: 13,
     lineHeight: 18,
-    color: '#747B9A',
+    color: appColors.textSecondary,
   },
   notFound: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#F2F2F7',
+    backgroundColor: appColors.background,
   },
   notFoundTitle: {
     fontSize: 22,
     fontWeight: '600',
-    color: '#111111',
+    color: appColors.textPrimary,
   },
 });

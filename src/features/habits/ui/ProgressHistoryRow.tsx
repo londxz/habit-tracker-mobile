@@ -1,6 +1,8 @@
 import { Ionicons } from '@react-native-vector-icons/ionicons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { appColors } from '../../../shared/theme/colors';
+
 import type { ProgressDay } from '../model/getProgressHistory';
 import { ProgressDayIndicator } from './ProgressDayIndicator';
 
@@ -50,7 +52,11 @@ export function ProgressHistoryRow({
           </Text>
         </View>
 
-        <Ionicons name="chevron-forward" size={22} color="#8E94A5" />
+        <Ionicons
+          name="chevron-forward"
+          size={22}
+          color={appColors.textTertiary}
+        />
       </Pressable>
     </View>
   );
@@ -92,7 +98,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     fontSize: 14,
     fontWeight: '600',
-    color: '#747480',
+    color: appColors.textSecondary,
   },
   row: {
     minHeight: 72,
@@ -100,8 +106,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 10,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#D1D1D6',
-    backgroundColor: '#FFFFFF',
+    borderBottomColor: appColors.separator,
+    backgroundColor: appColors.surface,
   },
   rowPressed: {
     opacity: 0.62,
@@ -113,12 +119,12 @@ const styles = StyleSheet.create({
   date: {
     fontSize: 17,
     lineHeight: 22,
-    color: '#111111',
+    color: appColors.textPrimary,
   },
   status: {
     marginTop: 2,
     fontSize: 14,
     lineHeight: 19,
-    color: '#747480',
+    color: appColors.textSecondary,
   },
 });

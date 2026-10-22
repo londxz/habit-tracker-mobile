@@ -38,8 +38,8 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     paddingHorizontal: 16,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: '#D1D1D6',
-    backgroundColor: '#F2F2F7',
+    borderTopColor: appColors.separator,
+    backgroundColor: appColors.background,
   },
   button: {
     minHeight: 54,
@@ -54,6 +54,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 17,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: appColors.onAccent,
   },
 });

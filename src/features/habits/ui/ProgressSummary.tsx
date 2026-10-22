@@ -1,5 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import { appColors } from '../../../shared/theme/colors';
+
 import { formatDayCount } from '../../../shared/localization/formatDayCount';
 import { ProgressRing } from './ProgressRing';
 
@@ -75,9 +77,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: '#D8D8DD',
+    borderColor: appColors.separator,
     borderRadius: 20,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: appColors.surface,
   },
   fire: {
     position: 'absolute',
@@ -92,12 +94,12 @@ const styles = StyleSheet.create({
     fontSize: 38,
     lineHeight: 42,
     fontWeight: '700',
-    color: '#000000',
+    color: appColors.textPrimary,
   },
   streakLabel: {
     fontSize: 17,
     lineHeight: 21,
-    color: '#747480',
+    color: appColors.textSecondary,
   },
   metrics: {
     flexDirection: 'row',
@@ -112,9 +114,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 10,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: '#D8D8DD',
+    borderColor: appColors.separator,
     borderRadius: 18,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: appColors.surface,
   },
   todayText: {
     marginLeft: 7,
@@ -125,14 +127,14 @@ const styles = StyleSheet.create({
   metricLabel: {
     fontSize: 15,
     lineHeight: 19,
-    color: '#747480',
+    color: appColors.textSecondary,
   },
   todayValue: {
     marginTop: 1,
     fontSize: 22,
     lineHeight: 27,
     fontWeight: '700',
-    color: '#111111',
+    color: appColors.textPrimary,
   },
   crown: {
     fontSize: 32,
@@ -143,6 +145,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     lineHeight: 25,
     fontWeight: '700',
-    color: '#111111',
+    color: appColors.textPrimary,
   },
 });

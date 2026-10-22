@@ -4,6 +4,8 @@ import {
 } from '@callstack/liquid-glass';
 import { PlatformColor, Pressable, StyleSheet, Text } from 'react-native';
 
+import { appColors } from '../../../shared/theme/colors';
+
 type AddHabitButtonProps = {
   onPress: () => void;
 };
@@ -60,9 +62,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: '#D1D1D6',
+    borderColor: appColors.separator,
     borderRadius: 26,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: appColors.surface,
   },
   buttonPressed: {
     opacity: 0.65,

@@ -1,5 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import { appColors } from '../../../shared/theme/colors';
+
 import type { Habit } from '../model/habitTypes';
 import { HabitIcon } from './HabitIcon';
 
@@ -57,11 +59,11 @@ const styles = StyleSheet.create({
     fontSize: 30,
     lineHeight: 35,
     fontWeight: '700',
-    color: '#000000',
+    color: appColors.textPrimary,
   },
   schedule: {
     fontSize: 16,
     lineHeight: 21,
-    color: '#747480',
+    color: appColors.textSecondary,
   },
 });

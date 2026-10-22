@@ -1,5 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { appColors } from '../../../shared/theme/colors';
+
 import type { TodayHabitFilter } from './todayHabitFilter';
 
 type TodayHabitFiltersProps = {
@@ -63,7 +65,7 @@ const styles = StyleSheet.create({
     marginTop: 28,
     padding: 4,
     borderRadius: 16,
-    backgroundColor: '#E5E5EA',
+    backgroundColor: appColors.controlBackground,
   },
   filter: {
     minHeight: 44,
@@ -75,8 +77,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   filterSelected: {
-    backgroundColor: '#FFFFFF',
-    shadowColor: '#000000',
+    backgroundColor: appColors.surface,
+    shadowColor: appColors.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
     shadowRadius: 3,
@@ -87,14 +89,14 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 15,
-    color: '#34343A',
+    color: appColors.textPrimary,
   },
   labelSelected: {
     fontWeight: '600',
-    color: '#111111',
+    color: appColors.textPrimary,
   },
   count: {
     fontSize: 15,
-    color: '#747480',
+    color: appColors.textSecondary,
   },
 });

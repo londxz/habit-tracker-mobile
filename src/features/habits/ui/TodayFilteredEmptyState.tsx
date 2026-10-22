@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     marginTop: 18,
     fontSize: 24,
     fontWeight: '700',
-    color: '#111111',
+    color: appColors.textPrimary,
   },
   description: {
     maxWidth: 300,
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 17,
     lineHeight: 23,
-    color: '#747480',
+    color: appColors.textSecondary,
   },
   showAll: {
     marginTop: 20,

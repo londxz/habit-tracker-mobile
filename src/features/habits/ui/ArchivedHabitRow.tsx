@@ -2,6 +2,7 @@ import { Ionicons } from '@react-native-vector-icons/ionicons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { formatCompletionCount } from '../../../shared/localization/formatCompletionCount';
+import { appColors } from '../../../shared/theme/colors';
 import type { ArchivedHabit } from '../model/getArchivedHabits';
 import { HabitIcon } from './HabitIcon';
 
@@ -40,7 +41,11 @@ export function ArchivedHabitRow({ item, onPress }: ArchivedHabitRowProps) {
         </Text>
       </View>
 
-      <Ionicons name="chevron-forward" size={24} color="#8E96B1" />
+      <Ionicons
+        name="chevron-forward"
+        size={24}
+        color={appColors.textTertiary}
+      />
     </Pressable>
   );
 }
@@ -52,11 +57,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 12,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#D8D8DE',
-    backgroundColor: '#FFFFFF',
+    borderBottomColor: appColors.separator,
+    backgroundColor: appColors.surface,
   },
   pressed: {
-    backgroundColor: '#F2F2F7',
+    backgroundColor: appColors.controlBackground,
   },
   content: {
     flex: 1,
@@ -67,12 +72,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 23,
     fontWeight: '600',
-    color: '#111111',
+    color: appColors.textPrimary,
   },
   description: {
     marginTop: 2,
     fontSize: 14,
     lineHeight: 18,
-    color: '#747B9A',
+    color: appColors.textSecondary,
   },
 });

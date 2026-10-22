@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     height: ringRadius * 2,
     borderWidth: strokeHeight,
     borderRadius: ringRadius,
-    borderColor: '#E1E2E7',
+    borderColor: appColors.track,
   },
   completeTrack: {
     borderColor: appColors.accent,
@@ -75,6 +75,6 @@ const styles = StyleSheet.create({
   percentage: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#111111',
+    color: appColors.textPrimary,
   },
 });

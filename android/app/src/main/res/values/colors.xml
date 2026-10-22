@@ -1,0 +1,14 @@
+<resources>
+    <color name="background">#F2F2F7</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="control_background">#E5E5EA</color>
+    <color name="selected_surface">#EDF4FF</color>
+    <color name="text_primary">#111111</color>
+    <color name="text_secondary">#747480</color>
+    <color name="text_tertiary">#8E94A5</color>
+    <color name="separator">#D1D1D6</color>
+    <color name="border">#A8AEC0</color>
+    <color name="track">#D8D8DC</color>
+    <color name="placeholder">#C7C7CC</color>
+    <color name="danger">#FF3B30</color>
+</resources>

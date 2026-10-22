@@ -22,6 +22,7 @@ import type {
 } from '../navigation/navigationTypes';
 import { getDateKey } from '../shared/date/getDateKey';
 import { useCurrentDate } from '../shared/date/useCurrentDate';
+import { appColors } from '../shared/theme/colors';
 
 const TAB_BAR_CONTENT_INSET = Platform.OS === 'ios' ? 72 : 64;
 const TAB_BAR_INDICATOR_INSET = Platform.OS === 'ios' ? 56 : 48;
@@ -183,7 +184,7 @@ export function TodayScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F2F2F7',
+    backgroundColor: appColors.background,
   },
   header: {
     flexDirection: 'row',
@@ -196,13 +197,13 @@ const styles = StyleSheet.create({
     fontSize: 44,
     lineHeight: 50,
     fontWeight: '700',
-    color: '#000000',
+    color: appColors.textPrimary,
   },
   headerSubtitle: {
     marginTop: 2,
     fontSize: 21,
     lineHeight: 27,
-    color: '#6C6C70',
+    color: appColors.textSecondary,
   },
   emptyStateContainer: {
     flex: 1,
@@ -229,7 +230,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     letterSpacing: 0.2,
-    color: '#6C6C70',
+    color: appColors.textSecondary,
   },
 });
 

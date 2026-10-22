@@ -253,7 +253,7 @@ function formatShortDate(dateKey: string): string {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F2F2F7',
+    backgroundColor: appColors.background,
   },
   content: {
     paddingTop: 8,
@@ -275,6 +275,6 @@ const styles = StyleSheet.create({
     paddingVertical: 36,
     textAlign: 'center',
     fontSize: 16,
-    color: '#747480',
+    color: appColors.textSecondary,
   },
 });

@@ -48,15 +48,15 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingHorizontal: 16,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: '#D1D1D6',
-    backgroundColor: '#FFFFFF',
+    borderTopColor: appColors.separator,
+    backgroundColor: appColors.surface,
   },
   restoreButton: {
     minHeight: 48,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: '#A8AEC0',
+    borderColor: appColors.border,
     borderRadius: 14,
   },
   restoreTitle: {
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
   },
   deleteTitle: {
     fontSize: 16,
-    color: '#FF3B30',
+    color: appColors.danger,
   },
   pressed: {
     opacity: 0.55,
