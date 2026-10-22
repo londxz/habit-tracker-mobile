@@ -102,19 +102,6 @@ export function HabitDetailsScreen({
     currentDate.getMonth(),
     1,
   );
-  const firstActivityMonthKey = habit.activityPeriods.reduce<string | null>(
-    (firstMonthKey, period) => {
-      const monthKey = period.startedOn.slice(0, 7);
-
-      return firstMonthKey === null || monthKey < firstMonthKey
-        ? monthKey
-        : firstMonthKey;
-    },
-    null,
-  );
-  const visibleMonthKey = getDateKey(visibleMonth).slice(0, 7);
-  const canOpenPreviousMonth =
-    firstActivityMonthKey !== null && visibleMonthKey > firstActivityMonthKey;
   const canOpenNextMonth = visibleMonth < currentMonth;
 
   function handleCompletionPress() {
@@ -180,7 +167,7 @@ export function HabitDetailsScreen({
               month={visibleMonth}
               entries={history}
               todayKey={todayKey}
-              canOpenPreviousMonth={canOpenPreviousMonth}
+              canOpenPreviousMonth
               canOpenNextMonth={canOpenNextMonth}
               onPreviousMonthPress={() => changeMonth(-1)}
               onNextMonthPress={() => changeMonth(1)}

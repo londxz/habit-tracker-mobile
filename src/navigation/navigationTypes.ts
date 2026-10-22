@@ -23,3 +23,11 @@ export type CreateHabitStackParamList = {
   HabitIconPicker: undefined;
   HabitColorPicker: undefined;
 };
+
+export type EditHabitStackParamList = {
+  EditHabitForm: {
+    habitId: string;
+  };
+  HabitIconPicker: undefined;
+  HabitColorPicker: undefined;
+};
