@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@callstack/liquid-glass": "^0.8.2",
+    "@notifee/react-native": "^9.1.8",
+    "@react-native-community/datetimepicker": "^9.2.2",
     "@react-native-vector-icons/get-image": "^14.0.0",
     "@react-native-vector-icons/ionicons": "^14.0.0",
     "@react-native/new-app-screen": "0.88.0",
