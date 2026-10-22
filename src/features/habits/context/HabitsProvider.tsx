@@ -1,9 +1,9 @@
 import {
+  useCallback,
   createContext,
   useContext,
-  useEffect,
   useReducer,
-  type Dispatch,
+  useRef,
   type ReactNode,
 } from 'react';
 
@@ -17,7 +17,7 @@ import { habitsStorage } from '../storage/habitsStorage';
 
 type HabitsContextValue = {
   state: HabitsState;
-  dispatch: Dispatch<HabitsAction>;
+  dispatch: (action: HabitsAction) => boolean;
 };
 
 type HabitsProviderProps = {
@@ -27,15 +27,31 @@ type HabitsProviderProps = {
 const HabitsContext = createContext<HabitsContextValue | null>(null);
 
 export function HabitsProvider({ children }: HabitsProviderProps) {
-  const [state, dispatch] = useReducer(
+  const [state, updateState] = useReducer(
     habitsReducer,
     initialHabitsState,
     loadInitialState,
   );
+  const stateRef = useRef(state);
 
-  useEffect(() => {
-    habitsStorage.save(state);
-  }, [state]);
+  const dispatch = useCallback((action: HabitsAction): boolean => {
+    const nextState = habitsReducer(stateRef.current, action);
+
+    if (nextState === stateRef.current) {
+      return true;
+    }
+
+    try {
+      habitsStorage.save(nextState);
+    } catch {
+      return false;
+    }
+
+    stateRef.current = nextState;
+    updateState({ type: 'stateLoaded', state: nextState });
+
+    return true;
+  }, []);
 
   return (
     <HabitsContext.Provider value={{ state, dispatch }}>

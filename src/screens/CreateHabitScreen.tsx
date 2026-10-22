@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { StyleSheet, Text } from 'react-native';
 
@@ -11,6 +11,7 @@ import {
 } from '../features/habits/model/habitValidation';
 import { HabitForm } from '../features/habits/ui/HabitForm';
 import { HabitPreviewCard } from '../features/habits/ui/HabitPreviewCard';
+import { showHabitSaveError } from '../features/habits/ui/showHabitSaveError';
 import type { CreateHabitStackParamList } from '../navigation/navigationTypes';
 import { appColors } from '../shared/theme/colors';
 
@@ -22,6 +23,7 @@ type CreateHabitScreenProps = NativeStackScreenProps<
 export function CreateHabitScreen({ navigation }: CreateHabitScreenProps) {
   const { state, dispatch } = useHabits();
   const { draft, updateDraft } = useHabitFormDraft();
+  const isSubmitting = useRef(false);
   const [nameError, setNameError] = useState<HabitNameValidationError | null>(
     null,
   );
@@ -32,6 +34,10 @@ export function CreateHabitScreen({ navigation }: CreateHabitScreenProps) {
   }
 
   function handleSave() {
+    if (isSubmitting.current) {
+      return;
+    }
+
     const validationResult = validateHabitName(draft.name, state.habits);
 
     if (!validationResult.isValid) {
@@ -39,7 +45,9 @@ export function CreateHabitScreen({ navigation }: CreateHabitScreenProps) {
       return;
     }
 
-    dispatch({
+    isSubmitting.current = true;
+
+    const didSave = dispatch({
       type: 'habitAdded',
       habit: createHabit({
         name: validationResult.name,
@@ -51,6 +59,12 @@ export function CreateHabitScreen({ navigation }: CreateHabitScreenProps) {
         },
       }),
     });
+
+    if (!didSave) {
+      isSubmitting.current = false;
+      showHabitSaveError();
+      return;
+    }
 
     navigation.getParent()?.goBack();
   }
