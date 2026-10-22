@@ -25,7 +25,7 @@ export function RootNavigator() {
       <Stack.Screen
         name="HabitDetails"
         component={HabitDetailsScreen}
-        options={{ title: 'Привычка' }}
+        options={{ title: '' }}
       />
 
       <Stack.Screen

@@ -4,6 +4,7 @@ import { FlatList, Platform, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useHabits } from '../features/habits/context/HabitsProvider';
+import { doesCompletionFinishDay } from '../features/habits/model/doesCompletionFinishDay';
 import { getHabitStreakStats } from '../features/habits/model/getHabitStreakStats';
 import { isHabitActive } from '../features/habits/model/isHabitActive';
 import { isHabitCompletedOn } from '../features/habits/model/isHabitCompletedOn';
@@ -75,11 +76,12 @@ export function TodayScreen() {
   }
 
   function handleCompletionPress(habitId: string) {
-    const selectedHabit = habitItems.find(item => item.habit.id === habitId);
-    const isCompletingHabit =
-      selectedHabit !== undefined && !selectedHabit.isCompleted;
-    const completesDay =
-      isCompletingHabit && completedCount === habitItems.length - 1;
+    const completesDay = doesCompletionFinishDay(
+      state.habits,
+      state.completions,
+      habitId,
+      todayKey,
+    );
 
     dispatch({
       type: 'habitCompletionToggled',
