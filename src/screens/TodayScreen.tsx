@@ -15,6 +15,7 @@ import { TodayFilteredEmptyState } from '../features/habits/ui/TodayFilteredEmpt
 import { TodayHabitCard } from '../features/habits/ui/TodayHabitCard';
 import { TodayHabitFilters } from '../features/habits/ui/TodayHabitFilters';
 import { TodayProgressSummary } from '../features/habits/ui/TodayProgressSummary';
+import { showHabitSaveError } from '../features/habits/ui/showHabitSaveError';
 import type { TodayHabitFilter } from '../features/habits/ui/todayHabitFilter';
 import type {
   MainTabsParamList,
@@ -84,11 +85,16 @@ export function TodayScreen() {
       todayKey,
     );
 
-    dispatch({
+    const didSave = dispatch({
       type: 'habitCompletionToggled',
       habitId,
       completedOn: todayKey,
     });
+
+    if (!didSave) {
+      showHabitSaveError();
+      return;
+    }
 
     if (completesDay) {
       setIsCelebrationVisible(true);
@@ -117,7 +123,10 @@ export function TodayScreen() {
 
       {habitItems.length === 0 ? (
         <View style={styles.emptyStateContainer}>
-          <TodayEmptyState onCreateHabitPress={handleCreateHabitPress} />
+          <TodayEmptyState
+            hasArchivedHabits={state.habits.length > 0}
+            onCreateHabitPress={handleCreateHabitPress}
+          />
         </View>
       ) : (
         <View style={styles.dashboard}>

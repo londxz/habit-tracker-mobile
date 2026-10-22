@@ -15,6 +15,7 @@ import { ArchivedHabitActions } from '../features/habits/ui/ArchivedHabitActions
 import { ArchivedHabitDetailsSummary } from '../features/habits/ui/ArchivedHabitDetailsSummary';
 import { HabitDetailsSummary } from '../features/habits/ui/HabitDetailsSummary';
 import { TodayCompletionCelebration } from '../features/habits/ui/TodayCompletionCelebration';
+import { showHabitSaveError } from '../features/habits/ui/showHabitSaveError';
 import {
   HistoryViewSwitch,
   type HistoryView,
@@ -123,11 +124,16 @@ export function HabitDetailsScreen({
       todayKey,
     );
 
-    dispatch({
+    const didSave = dispatch({
       type: 'habitCompletionToggled',
       habitId,
       completedOn: todayKey,
     });
+
+    if (!didSave) {
+      showHabitSaveError();
+      return;
+    }
 
     if (completesDay) {
       setIsCelebrationVisible(true);
@@ -141,11 +147,17 @@ export function HabitDetailsScreen({
   }
 
   function handleRestorePress() {
-    dispatch({
+    const didSave = dispatch({
       type: 'habitRestored',
       habitId,
       startedOn: todayKey,
     });
+
+    if (!didSave) {
+      showHabitSaveError();
+      return;
+    }
+
     navigation.popTo('MainTabs', { screen: 'Today' });
   }
 
@@ -159,7 +171,13 @@ export function HabitDetailsScreen({
           text: 'Удалить',
           style: 'destructive',
           onPress: () => {
-            dispatch({ type: 'habitDeleted', habitId });
+            const didSave = dispatch({ type: 'habitDeleted', habitId });
+
+            if (!didSave) {
+              showHabitSaveError();
+              return;
+            }
+
             navigation.goBack();
           },
         },

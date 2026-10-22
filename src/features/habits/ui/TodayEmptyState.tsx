@@ -4,10 +4,14 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { appColors } from '../../../shared/theme/colors';
 
 type TodayEmptyStateProps = {
+  hasArchivedHabits: boolean;
   onCreateHabitPress: () => void;
 };
 
-export function TodayEmptyState({ onCreateHabitPress }: TodayEmptyStateProps) {
+export function TodayEmptyState({
+  hasArchivedHabits,
+  onCreateHabitPress,
+}: TodayEmptyStateProps) {
   return (
     <View style={styles.container}>
       <Ionicons
@@ -15,9 +19,13 @@ export function TodayEmptyState({ onCreateHabitPress }: TodayEmptyStateProps) {
         size={72}
         color={appColors.textTertiary}
       />
-      <Text style={styles.title}>Привычек пока нет</Text>
+      <Text style={styles.title}>
+        {hasArchivedHabits ? 'Нет активных привычек' : 'Привычек пока нет'}
+      </Text>
       <Text style={styles.description}>
-        Создайте первую привычку, чтобы начать отслеживать прогресс.
+        {hasArchivedHabits
+          ? 'Создайте новую привычку или восстановите завершённую из архива.'
+          : 'Создайте первую привычку, чтобы начать отслеживать прогресс.'}
       </Text>
 
       <Pressable

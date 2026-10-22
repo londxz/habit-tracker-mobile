@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Ionicons } from '@react-native-vector-icons/ionicons';
 import type {
   NativeStackNavigationProp,
@@ -13,6 +13,7 @@ import {
   type HabitNameValidationError,
 } from '../features/habits/model/habitValidation';
 import { HabitForm } from '../features/habits/ui/HabitForm';
+import { showHabitSaveError } from '../features/habits/ui/showHabitSaveError';
 import type {
   EditHabitStackParamList,
   RootStackParamList,
@@ -29,6 +30,7 @@ type EditHabitScreenProps = NativeStackScreenProps<
 export function EditHabitScreen({ navigation, route }: EditHabitScreenProps) {
   const { state, dispatch } = useHabits();
   const { draft, updateDraft } = useHabitFormDraft();
+  const isSubmitting = useRef(false);
   const currentDate = useCurrentDate();
   const [nameError, setNameError] = useState<HabitNameValidationError | null>(
     null,
@@ -43,7 +45,7 @@ export function EditHabitScreen({ navigation, route }: EditHabitScreenProps) {
   }
 
   function handleSave() {
-    if (habit === undefined) {
+    if (habit === undefined || isSubmitting.current) {
       return;
     }
 
@@ -58,7 +60,9 @@ export function EditHabitScreen({ navigation, route }: EditHabitScreenProps) {
       return;
     }
 
-    dispatch({
+    isSubmitting.current = true;
+
+    const didSave = dispatch({
       type: 'habitUpdated',
       habitId: habit.id,
       changes: {
@@ -71,6 +75,12 @@ export function EditHabitScreen({ navigation, route }: EditHabitScreenProps) {
         },
       },
     });
+
+    if (!didSave) {
+      isSubmitting.current = false;
+      showHabitSaveError();
+      return;
+    }
 
     rootNavigation?.goBack();
   }
@@ -89,12 +99,18 @@ export function EditHabitScreen({ navigation, route }: EditHabitScreenProps) {
           text: 'Завершить',
           style: 'destructive',
           onPress: () => {
-            dispatch({
+            const didSave = dispatch({
               type: 'habitArchived',
               habitId: habit.id,
               archivedOn: getDateKey(currentDate),
               archivedAt: new Date().toISOString(),
             });
+
+            if (!didSave) {
+              showHabitSaveError();
+              return;
+            }
+
             rootNavigation?.goBack();
           },
         },
@@ -116,7 +132,16 @@ export function EditHabitScreen({ navigation, route }: EditHabitScreenProps) {
           text: 'Удалить',
           style: 'destructive',
           onPress: () => {
-            dispatch({ type: 'habitDeleted', habitId: habit.id });
+            const didSave = dispatch({
+              type: 'habitDeleted',
+              habitId: habit.id,
+            });
+
+            if (!didSave) {
+              showHabitSaveError();
+              return;
+            }
+
             rootNavigation?.popTo('MainTabs');
           },
         },

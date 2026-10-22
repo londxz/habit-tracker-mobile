@@ -1,5 +1,6 @@
 import { getAdjacentDateKey } from '../../../shared/date/getAdjacentDateKey';
 import type { Habit, HabitsState } from './habitTypes';
+import { normalizeHabitName } from './habitValidation';
 import { isHabitCompletedOn } from './isHabitCompletedOn';
 
 export const initialHabitsState: HabitsState = {
@@ -51,12 +52,32 @@ export function habitsReducer(
       return action.state;
 
     case 'habitAdded':
+      if (
+        state.habits.some(
+          habit =>
+            habit.id === action.habit.id ||
+            areHabitNamesEqual(habit.name, action.habit.name),
+        )
+      ) {
+        return state;
+      }
+
       return {
         ...state,
         habits: [...state.habits, action.habit],
       };
 
     case 'habitUpdated':
+      if (
+        state.habits.some(
+          habit =>
+            habit.id !== action.habitId &&
+            areHabitNamesEqual(habit.name, action.changes.name),
+        )
+      ) {
+        return state;
+      }
+
       return {
         ...state,
         habits: state.habits.map(habit =>
@@ -169,4 +190,11 @@ export function habitsReducer(
     default:
       return state;
   }
+}
+
+function areHabitNamesEqual(firstName: string, secondName: string): boolean {
+  return (
+    normalizeHabitName(firstName).toLocaleLowerCase() ===
+    normalizeHabitName(secondName).toLocaleLowerCase()
+  );
 }
