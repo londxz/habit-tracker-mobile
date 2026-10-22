@@ -6,22 +6,32 @@ import type { HabitHistoryEntry } from '../model/getHabitHistory';
 type HabitHistoryRowProps = {
   entry: HabitHistoryEntry;
   todayKey: string;
+  showsYear?: boolean;
 };
 
 const dateFormatter = new Intl.DateTimeFormat('ru-RU', {
   day: 'numeric',
   month: 'long',
 });
+const dateWithYearFormatter = new Intl.DateTimeFormat('ru-RU', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
 const weekdayFormatter = new Intl.DateTimeFormat('ru-RU', {
   weekday: 'long',
 });
 
-export function HabitHistoryRow({ entry, todayKey }: HabitHistoryRowProps) {
+export function HabitHistoryRow({
+  entry,
+  todayKey,
+  showsYear = false,
+}: HabitHistoryRowProps) {
   return (
     <View style={styles.container}>
       <View style={styles.text}>
         <Text style={styles.date}>
-          {getHistoryDateTitle(entry.dateKey, todayKey)}
+          {getHistoryDateTitle(entry.dateKey, todayKey, showsYear)}
         </Text>
         <Text style={styles.status}>
           {entry.isCompleted ? 'Выполнено' : 'Не выполнено'}
@@ -40,12 +50,18 @@ export function HabitHistoryRow({ entry, todayKey }: HabitHistoryRowProps) {
   );
 }
 
-function getHistoryDateTitle(dateKey: string, todayKey: string): string {
+function getHistoryDateTitle(
+  dateKey: string,
+  todayKey: string,
+  showsYear: boolean,
+): string {
   const [year, month, day] = dateKey.split('-').map(Number);
   const date = new Date(year, month - 1, day);
-  const dateTitle = dateFormatter.format(date);
+  const dateTitle = (showsYear ? dateWithYearFormatter : dateFormatter)
+    .format(date)
+    .replace(/\s*г\.$/i, '');
 
-  if (dateKey === todayKey) {
+  if (!showsYear && dateKey === todayKey) {
     return `Сегодня, ${dateTitle}`;
   }
 

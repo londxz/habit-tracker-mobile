@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { formatDayCount } from '../../../shared/localization/formatDayCount';
 import { appColors } from '../../../shared/theme/colors';
 import type { Habit } from '../model/habitTypes';
-import { HabitIcon } from './HabitIcon';
+import { HabitIdentity } from './HabitIdentity';
 
 type HabitDetailsSummaryProps = {
   habit: Habit;
@@ -30,21 +30,7 @@ export function HabitDetailsSummary({
 }: HabitDetailsSummaryProps) {
   return (
     <View>
-      <View style={styles.identity}>
-        <HabitIcon
-          name={habit.name}
-          emoji={habit.emoji}
-          color={habit.color}
-          size={54}
-        />
-
-        <View style={styles.identityText}>
-          <Text numberOfLines={2} style={styles.name}>
-            {habit.name}
-          </Text>
-          <Text style={styles.schedule}>{getScheduleTitle(habit)}</Text>
-        </View>
-      </View>
+      <HabitIdentity habit={habit} />
 
       {isActive ? (
         <Pressable
@@ -101,34 +87,7 @@ export function HabitDetailsSummary({
   );
 }
 
-function getScheduleTitle(habit: Habit): string {
-  if (habit.reminder.isEnabled) {
-    return `Каждый день · ${habit.reminder.time}`;
-  }
-
-  return 'Каждый день';
-}
-
 const styles = StyleSheet.create({
-  identity: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  identityText: {
-    flex: 1,
-    marginLeft: 12,
-  },
-  name: {
-    fontSize: 30,
-    lineHeight: 35,
-    fontWeight: '700',
-    color: '#000000',
-  },
-  schedule: {
-    fontSize: 16,
-    lineHeight: 21,
-    color: '#747480',
-  },
   todayCard: {
     minHeight: 78,
     flexDirection: 'row',

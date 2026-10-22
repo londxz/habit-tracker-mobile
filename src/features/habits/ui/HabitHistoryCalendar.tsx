@@ -9,7 +9,7 @@ import type { HabitHistoryEntry } from '../model/getHabitHistory';
 type HabitHistoryCalendarProps = {
   month: Date;
   entries: HabitHistoryEntry[];
-  todayKey: string;
+  highlightedDateKey: string;
   canOpenPreviousMonth: boolean;
   canOpenNextMonth: boolean;
   onPreviousMonthPress: () => void;
@@ -21,7 +21,7 @@ const weekdayTitles = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 export function HabitHistoryCalendar({
   month,
   entries,
-  todayKey,
+  highlightedDateKey,
   canOpenPreviousMonth,
   canOpenNextMonth,
   onPreviousMonthPress,
@@ -93,10 +93,19 @@ export function HabitHistoryCalendar({
               <View
                 style={[
                   styles.dayNumberContainer,
-                  dateKey === todayKey && styles.today,
+                  dateKey === highlightedDateKey && styles.highlightedDay,
                 ]}
               >
-                <Text style={styles.dayNumber}>{day}</Text>
+                <Text
+                  style={[
+                    styles.dayNumber,
+                    entry === undefined && styles.unavailableDayNumber,
+                    dateKey === highlightedDateKey &&
+                      styles.highlightedDayNumber,
+                  ]}
+                >
+                  {day}
+                </Text>
               </View>
 
               {entry?.isCompleted ? (
@@ -192,12 +201,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 14,
   },
-  today: {
+  highlightedDay: {
     borderWidth: 2,
     borderColor: appColors.accent,
   },
   dayNumber: {
     fontSize: 16,
+    color: '#111111',
+  },
+  unavailableDayNumber: {
+    color: '#C7C7CC',
+  },
+  highlightedDayNumber: {
     color: '#111111',
   },
   completedMarker: {

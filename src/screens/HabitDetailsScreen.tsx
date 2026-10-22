@@ -1,15 +1,18 @@
 import { useCallback, useLayoutEffect, useMemo, useState } from 'react';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Button, FlatList, StyleSheet, Text, View } from 'react-native';
+import { Alert, Button, FlatList, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useHabits } from '../features/habits/context/HabitsProvider';
 import { doesCompletionFinishDay } from '../features/habits/model/doesCompletionFinishDay';
+import { getHabitArchivedAt } from '../features/habits/model/getHabitArchivedAt';
 import { getHabitCompletionStats } from '../features/habits/model/getHabitCompletionStats';
 import { getHabitHistory } from '../features/habits/model/getHabitHistory';
 import { getHabitStreakStats } from '../features/habits/model/getHabitStreakStats';
 import { isHabitActive } from '../features/habits/model/isHabitActive';
 import { isHabitCompletedOn } from '../features/habits/model/isHabitCompletedOn';
+import { ArchivedHabitActions } from '../features/habits/ui/ArchivedHabitActions';
+import { ArchivedHabitDetailsSummary } from '../features/habits/ui/ArchivedHabitDetailsSummary';
 import { HabitDetailsSummary } from '../features/habits/ui/HabitDetailsSummary';
 import { TodayCompletionCelebration } from '../features/habits/ui/TodayCompletionCelebration';
 import {
@@ -38,10 +41,16 @@ export function HabitDetailsScreen({
   const todayKey = getDateKey(currentDate);
   const habit = state.habits.find(item => item.id === route.params.habitId);
   const active = habit !== undefined && isHabitActive(habit);
+  const archivedAt = habit === undefined ? null : getHabitArchivedAt(habit);
+  const archiveDateKey =
+    archivedAt === null ? null : getDateKey(new Date(archivedAt));
   const [selectedView, setSelectedView] = useState<HistoryView>('calendar');
-  const [visibleMonth, setVisibleMonth] = useState(
-    () => new Date(currentDate.getFullYear(), currentDate.getMonth(), 1),
-  );
+  const [visibleMonth, setVisibleMonth] = useState(() => {
+    const initialDate =
+      archivedAt === null ? currentDate : new Date(archivedAt);
+
+    return new Date(initialDate.getFullYear(), initialDate.getMonth(), 1);
+  });
   const [isCelebrationVisible, setIsCelebrationVisible] = useState(false);
   const handleCelebrationDismiss = useCallback(() => {
     setIsCelebrationVisible(false);
@@ -97,12 +106,14 @@ export function HabitDetailsScreen({
     todayKey,
   );
   const habitId = habit.id;
-  const currentMonth = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth(),
+  const lastVisibleDate =
+    active || archivedAt === null ? currentDate : new Date(archivedAt);
+  const lastVisibleMonth = new Date(
+    lastVisibleDate.getFullYear(),
+    lastVisibleDate.getMonth(),
     1,
   );
-  const canOpenNextMonth = visibleMonth < currentMonth;
+  const canOpenNextMonth = visibleMonth < lastVisibleMonth;
 
   function handleCompletionPress() {
     const completesDay = doesCompletionFinishDay(
@@ -129,27 +140,69 @@ export function HabitDetailsScreen({
     );
   }
 
+  function handleRestorePress() {
+    dispatch({
+      type: 'habitRestored',
+      habitId,
+      startedOn: todayKey,
+    });
+    navigation.popTo('MainTabs', { screen: 'Today' });
+  }
+
+  function handleDeletePress() {
+    Alert.alert(
+      'Удалить привычку навсегда?',
+      'Привычка и вся история выполнения будут удалены безвозвратно.',
+      [
+        { text: 'Отмена', style: 'cancel' },
+        {
+          text: 'Удалить',
+          style: 'destructive',
+          onPress: () => {
+            dispatch({ type: 'habitDeleted', habitId });
+            navigation.goBack();
+          },
+        },
+      ],
+    );
+  }
+
   return (
     <View style={styles.container}>
       <FlatList
         data={selectedView === 'history' ? history : []}
         keyExtractor={entry => entry.dateKey}
         renderItem={({ item }) => (
-          <HabitHistoryRow entry={item} todayKey={todayKey} />
+          <HabitHistoryRow
+            entry={item}
+            todayKey={todayKey}
+            showsYear={!active}
+          />
         )}
         ListHeaderComponent={
           <View>
-            <HabitDetailsSummary
-              habit={habit}
-              isActive={active}
-              isCompletedToday={isCompletedToday}
-              currentStreak={streaks.current}
-              bestStreak={streaks.best}
-              percentage={completionStats.percentage}
-              completedCount={completionStats.completedCount}
-              plannedCount={completionStats.plannedCount}
-              onCompletionPress={handleCompletionPress}
-            />
+            {!active && archivedAt !== null ? (
+              <ArchivedHabitDetailsSummary
+                habit={habit}
+                archivedAt={archivedAt}
+                bestStreak={streaks.best}
+                percentage={completionStats.percentage}
+                completedCount={completionStats.completedCount}
+                plannedCount={completionStats.plannedCount}
+              />
+            ) : (
+              <HabitDetailsSummary
+                habit={habit}
+                isActive={active}
+                isCompletedToday={isCompletedToday}
+                currentStreak={streaks.current}
+                bestStreak={streaks.best}
+                percentage={completionStats.percentage}
+                completedCount={completionStats.completedCount}
+                plannedCount={completionStats.plannedCount}
+                onCompletionPress={handleCompletionPress}
+              />
+            )}
 
             <HistoryViewSwitch
               selectedView={selectedView}
@@ -166,7 +219,7 @@ export function HabitDetailsScreen({
             <HabitHistoryCalendar
               month={visibleMonth}
               entries={history}
-              todayKey={todayKey}
+              highlightedDateKey={archiveDateKey ?? todayKey}
               canOpenPreviousMonth
               canOpenNextMonth={canOpenNextMonth}
               onPreviousMonthPress={() => changeMonth(-1)}
@@ -182,6 +235,13 @@ export function HabitDetailsScreen({
         showsVerticalScrollIndicator={false}
         style={styles.list}
       />
+
+      {!active && archivedAt !== null ? (
+        <ArchivedHabitActions
+          onRestorePress={handleRestorePress}
+          onDeletePress={handleDeletePress}
+        />
+      ) : null}
 
       <TodayCompletionCelebration
         visible={isCelebrationVisible}
