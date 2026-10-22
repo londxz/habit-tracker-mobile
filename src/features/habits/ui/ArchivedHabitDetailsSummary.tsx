@@ -2,6 +2,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { formatCompletionCount } from '../../../shared/localization/formatCompletionCount';
 import { formatDayCount } from '../../../shared/localization/formatDayCount';
+import { appColors } from '../../../shared/theme/colors';
 import type { Habit } from '../model/habitTypes';
 import { HabitIdentity } from './HabitIdentity';
 
@@ -85,24 +86,24 @@ const styles = StyleSheet.create({
     marginTop: 16,
     padding: 16,
     borderRadius: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: appColors.surface,
   },
   archiveLabel: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#747B9A',
+    color: appColors.textSecondary,
   },
   archiveDate: {
     marginTop: 4,
     fontSize: 25,
     lineHeight: 30,
     fontWeight: '700',
-    color: '#111111',
+    color: appColors.textPrimary,
   },
   archiveDescription: {
     marginTop: 3,
     fontSize: 16,
-    color: '#747B9A',
+    color: appColors.textSecondary,
   },
   metrics: {
     flexDirection: 'row',
@@ -110,7 +111,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: '#D1D1D6',
+    borderColor: appColors.separator,
   },
   metricColumn: {
     flex: 1,
@@ -119,13 +120,13 @@ const styles = StyleSheet.create({
   },
   divider: {
     width: StyleSheet.hairlineWidth,
-    backgroundColor: '#D1D1D6',
+    backgroundColor: appColors.separator,
   },
   metricLabel: {
     fontSize: 12,
     fontWeight: '600',
     textAlign: 'center',
-    color: '#747B9A',
+    color: appColors.textSecondary,
   },
   metricValue: {
     marginTop: 4,
@@ -133,7 +134,7 @@ const styles = StyleSheet.create({
     lineHeight: 30,
     fontWeight: '700',
     textAlign: 'center',
-    color: '#000000',
+    color: appColors.textPrimary,
   },
   completionStats: {
     alignItems: 'center',
@@ -144,13 +145,13 @@ const styles = StyleSheet.create({
     lineHeight: 27,
     fontWeight: '700',
     textAlign: 'center',
-    color: '#111111',
+    color: appColors.textPrimary,
   },
   percentageDescription: {
     marginTop: 2,
     fontSize: 15,
     lineHeight: 20,
     textAlign: 'center',
-    color: '#747480',
+    color: appColors.textSecondary,
   },
 });

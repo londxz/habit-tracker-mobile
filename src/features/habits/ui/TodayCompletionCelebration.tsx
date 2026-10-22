@@ -9,6 +9,8 @@ import {
   Text,
 } from 'react-native';
 
+import { appColors } from '../../../shared/theme/colors';
+
 type TodayCompletionCelebrationProps = {
   visible: boolean;
   onDismiss: () => void;
@@ -102,7 +104,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(8, 8, 12, 0.94)',
+    backgroundColor: appColors.celebrationOverlay,
   },
   content: {
     alignItems: 'center',
@@ -116,12 +118,12 @@ const styles = StyleSheet.create({
     fontSize: 34,
     lineHeight: 41,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: appColors.onAccent,
   },
   subtitle: {
     marginTop: 8,
     fontSize: 18,
     lineHeight: 24,
-    color: '#C7C7CC',
+    color: appColors.celebrationSecondary,
   },
 });

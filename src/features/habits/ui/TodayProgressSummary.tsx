@@ -97,14 +97,14 @@ const styles = StyleSheet.create({
     fontSize: 64,
     lineHeight: 68,
     fontWeight: '700',
-    color: '#000000',
+    color: appColors.textPrimary,
   },
   subtitle: {
     marginTop: 2,
     fontSize: 22,
     lineHeight: 28,
     fontWeight: '600',
-    color: '#34343A',
+    color: appColors.textPrimary,
   },
   segments: {
     flexDirection: 'row',
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     height: 12,
     flex: 1,
     borderRadius: 6,
-    backgroundColor: '#D8D8DC',
+    backgroundColor: appColors.track,
   },
   segmentCompleted: {
     backgroundColor: appColors.accent,
@@ -124,6 +124,6 @@ const styles = StyleSheet.create({
     marginTop: 14,
     fontSize: 17,
     lineHeight: 22,
-    color: '#6C6C70',
+    color: appColors.textSecondary,
   },
 });

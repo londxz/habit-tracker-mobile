@@ -65,7 +65,7 @@ function CreateHabitCancelButton() {
 
 const styles = StyleSheet.create({
   content: {
-    backgroundColor: '#F2F2F7',
+    backgroundColor: appColors.background,
   },
   cancelButtonTitle: {
     fontSize: 17,

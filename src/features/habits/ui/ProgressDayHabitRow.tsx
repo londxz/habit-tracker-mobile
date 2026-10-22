@@ -44,11 +44,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 12,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#D1D1D6',
-    backgroundColor: '#FFFFFF',
+    borderBottomColor: appColors.separator,
+    backgroundColor: appColors.surface,
   },
   completed: {
-    backgroundColor: '#EDF4FF',
+    backgroundColor: appColors.selectedSurface,
   },
   text: {
     flex: 1,
@@ -58,12 +58,12 @@ const styles = StyleSheet.create({
     fontSize: 17,
     lineHeight: 22,
     fontWeight: '600',
-    color: '#111111',
+    color: appColors.textPrimary,
   },
   status: {
     marginTop: 2,
     fontSize: 14,
-    color: '#747480',
+    color: appColors.textSecondary,
   },
   statusCircle: {
     width: 34,
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: '#8E94A5',
+    borderColor: appColors.textTertiary,
     borderRadius: 17,
   },
   statusCircleCompleted: {
@@ -82,6 +82,6 @@ const styles = StyleSheet.create({
     fontSize: 19,
     lineHeight: 22,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: appColors.onAccent,
   },
 });

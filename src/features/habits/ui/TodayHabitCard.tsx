@@ -119,10 +119,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     overflow: 'hidden',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: appColors.surface,
   },
   cardCompleted: {
-    backgroundColor: '#EDF4FF',
+    backgroundColor: appColors.selectedSurface,
   },
   firstCard: {
     borderTopLeftRadius: 16,
@@ -151,13 +151,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 22,
     fontWeight: '600',
-    color: '#111111',
+    color: appColors.textPrimary,
   },
   subtitle: {
     marginTop: 4,
     fontSize: 13,
     lineHeight: 18,
-    color: '#747480',
+    color: appColors.textSecondary,
   },
   completionButton: {
     width: 58,
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: '#A8AEC0',
+    borderColor: appColors.border,
     borderRadius: 15,
   },
   completionCircleCompleted: {
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 20,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: appColors.onAccent,
   },
   separator: {
     position: 'absolute',
@@ -190,6 +190,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 74,
     height: StyleSheet.hairlineWidth,
-    backgroundColor: '#D8D8DE',
+    backgroundColor: appColors.separator,
   },
 });

@@ -96,22 +96,22 @@ const styles = StyleSheet.create({
     marginTop: 16,
     paddingHorizontal: 18,
     borderRadius: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: appColors.surface,
   },
   todayCardCompleted: {
-    backgroundColor: '#EDF4FF',
+    backgroundColor: appColors.selectedSurface,
   },
   todayLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#747480',
+    color: appColors.textSecondary,
   },
   todayStatus: {
     marginTop: 3,
     fontSize: 24,
     lineHeight: 29,
     fontWeight: '700',
-    color: '#111111',
+    color: appColors.textPrimary,
   },
   completionCircle: {
     width: 36,
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: '#8E94A5',
+    borderColor: appColors.textTertiary,
     borderRadius: 18,
   },
   completionCircleCompleted: {
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     fontSize: 21,
     lineHeight: 24,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: appColors.onAccent,
   },
   pressed: {
     opacity: 0.7,
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: '#D1D1D6',
+    borderColor: appColors.separator,
   },
   streakColumn: {
     flex: 1,
@@ -150,13 +150,13 @@ const styles = StyleSheet.create({
   },
   divider: {
     width: StyleSheet.hairlineWidth,
-    backgroundColor: '#D1D1D6',
+    backgroundColor: appColors.separator,
   },
   streakLabel: {
     fontSize: 12,
     fontWeight: '600',
     textAlign: 'center',
-    color: '#747480',
+    color: appColors.textSecondary,
   },
   streakValue: {
     marginTop: 4,
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     lineHeight: 31,
     fontWeight: '700',
     textAlign: 'center',
-    color: '#000000',
+    color: appColors.textPrimary,
   },
   completionStats: {
     alignItems: 'center',
@@ -175,13 +175,13 @@ const styles = StyleSheet.create({
     lineHeight: 27,
     fontWeight: '700',
     textAlign: 'center',
-    color: '#111111',
+    color: appColors.textPrimary,
   },
   percentageDescription: {
     marginTop: 2,
     fontSize: 15,
     lineHeight: 20,
     textAlign: 'center',
-    color: '#747480',
+    color: appColors.textSecondary,
   },
 });

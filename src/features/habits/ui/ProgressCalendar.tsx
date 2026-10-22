@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     width: `${100 / 7}%`,
     textAlign: 'center',
     fontSize: 14,
-    color: '#747480',
+    color: appColors.textSecondary,
   },
   days: {
     flexDirection: 'row',
@@ -197,10 +197,10 @@ const styles = StyleSheet.create({
   },
   dayNumber: {
     fontSize: 15,
-    color: '#111111',
+    color: appColors.textPrimary,
   },
   futureDayNumber: {
-    color: '#C7C7CC',
+    color: appColors.placeholder,
   },
   dayIndicator: {
     marginTop: 1,
@@ -219,6 +219,6 @@ const styles = StyleSheet.create({
   legendTitle: {
     marginLeft: 6,
     fontSize: 14,
-    color: '#747480',
+    color: appColors.textSecondary,
   },
 });

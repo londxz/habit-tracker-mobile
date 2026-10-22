@@ -3,6 +3,8 @@ import DateTimePicker, {
 } from '@react-native-community/datetimepicker';
 import { Platform, Pressable, StyleSheet, Text } from 'react-native';
 
+import { appColors } from '../../../shared/theme/colors';
+
 type ReminderTimePickerProps = {
   value: string;
   disabled: boolean;
@@ -82,14 +84,14 @@ const styles = StyleSheet.create({
   },
   value: {
     fontSize: 17,
-    color: '#747B9A',
+    color: appColors.textSecondary,
   },
   chevron: {
     marginLeft: 10,
     fontSize: 32,
     lineHeight: 34,
     fontWeight: '300',
-    color: '#8E96B1',
+    color: appColors.textTertiary,
   },
   pressed: {
     opacity: 0.55,

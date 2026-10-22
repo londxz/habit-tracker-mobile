@@ -104,7 +104,7 @@ export function HabitIconPickerScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F2F2F7',
+    backgroundColor: appColors.background,
   },
   scroll: {
     flex: 1,
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     fontSize: 17,
     lineHeight: 23,
-    color: '#747B9A',
+    color: appColors.textSecondary,
   },
   withoutIcon: {
     minHeight: 82,
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'transparent',
     borderRadius: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: appColors.surface,
   },
   optionSelected: {
     borderColor: appColors.accent,
@@ -141,12 +141,12 @@ const styles = StyleSheet.create({
   withoutIconTitle: {
     fontSize: 17,
     fontWeight: '500',
-    color: '#111111',
+    color: appColors.textPrimary,
   },
   withoutIconDescription: {
     marginTop: 2,
     fontSize: 14,
-    color: '#747B9A',
+    color: appColors.textSecondary,
   },
   sectionTitle: {
     marginTop: 28,
@@ -155,14 +155,14 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     letterSpacing: 0.2,
-    color: '#747B9A',
+    color: appColors.textSecondary,
   },
   emojiCard: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     padding: 10,
     borderRadius: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: appColors.surface,
   },
   emojiOption: {
     width: '16.666%',
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   },
   emojiOptionSelected: {
     borderColor: appColors.accent,
-    backgroundColor: '#EFF5FF',
+    backgroundColor: appColors.selectedSurface,
   },
   emoji: {
     fontSize: 30,
@@ -189,14 +189,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: '#FFFFFF',
+    borderColor: appColors.surface,
     borderRadius: 9,
     backgroundColor: appColors.accent,
   },
   checkBadgeText: {
     fontSize: 10,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: appColors.onAccent,
   },
   buttonPressed: {
     opacity: 0.65,

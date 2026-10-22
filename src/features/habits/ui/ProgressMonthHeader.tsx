@@ -1,6 +1,8 @@
 import { Ionicons } from '@react-native-vector-icons/ionicons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { appColors } from '../../../shared/theme/colors';
+
 type ProgressMonthHeaderProps = {
   month: Date;
   canOpenPreviousMonth: boolean;
@@ -63,7 +65,11 @@ function MonthButton({ direction, isEnabled, onPress }: MonthButtonProps) {
         pressed && styles.buttonPressed,
       ]}
     >
-      <Ionicons name={`chevron-${direction}`} size={26} color="#111111" />
+      <Ionicons
+        name={`chevron-${direction}`}
+        size={26}
+        color={appColors.textPrimary}
+      />
     </Pressable>
   );
 }
@@ -85,7 +91,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#111111',
+    color: appColors.textPrimary,
   },
   button: {
     width: 44,

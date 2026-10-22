@@ -27,7 +27,7 @@ export function HabitColorPickerScreen() {
         <ColorOption
           name="Без цвета"
           description="Нейтральное оформление"
-          color="#E5E5EA"
+          color="#8E8E93"
           isSelected={draft.color === null}
           onPress={() => handleColorPress(null)}
         />
@@ -123,7 +123,7 @@ function ColorOption({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F2F2F7',
+    backgroundColor: appColors.background,
   },
   scroll: {
     flex: 1,
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     fontSize: 17,
     lineHeight: 23,
-    color: '#747B9A',
+    color: appColors.textSecondary,
   },
   sectionTitle: {
     marginTop: 28,
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     letterSpacing: 0.2,
-    color: '#747B9A',
+    color: appColors.textSecondary,
   },
   palette: {
     flexDirection: 'row',
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'transparent',
     borderRadius: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: appColors.surface,
   },
   colorOptionCompact: {
     minHeight: 108,
@@ -192,18 +192,18 @@ const styles = StyleSheet.create({
   colorName: {
     fontSize: 17,
     fontWeight: '500',
-    color: '#111111',
+    color: appColors.textPrimary,
   },
   colorNameCompact: {
     marginTop: 10,
     fontSize: 15,
     fontWeight: '500',
-    color: '#111111',
+    color: appColors.textPrimary,
   },
   colorDescription: {
     marginTop: 2,
     fontSize: 14,
-    color: '#747B9A',
+    color: appColors.textSecondary,
   },
   buttonPressed: {
     opacity: 0.7,

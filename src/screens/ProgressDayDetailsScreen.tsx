@@ -69,7 +69,11 @@ export function ProgressDayDetailsScreen({
                   pressed && styles.closeButtonPressed,
                 ]}
               >
-                <Ionicons name="close" size={26} color="#4B4B52" />
+                <Ionicons
+                  name="close"
+                  size={26}
+                  color={appColors.textPrimary}
+                />
               </Pressable>
             </View>
 
@@ -108,7 +112,7 @@ function getDateTitle(dateKey: string): string {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F2F2F7',
+    backgroundColor: appColors.background,
   },
   list: {
     flex: 1,
@@ -123,14 +127,14 @@ const styles = StyleSheet.create({
   eyebrow: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#747480',
+    color: appColors.textSecondary,
   },
   date: {
     marginTop: 4,
     fontSize: 36,
     lineHeight: 42,
     fontWeight: '700',
-    color: '#000000',
+    color: appColors.textPrimary,
   },
   closeButton: {
     width: 44,
@@ -138,7 +142,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 22,
-    backgroundColor: '#E5E5EA',
+    backgroundColor: appColors.controlBackground,
   },
   closeButtonPressed: {
     opacity: 0.6,
@@ -149,7 +153,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 23,
     fontWeight: '600',
-    color: '#34343A',
+    color: appColors.textPrimary,
   },
   progressSegments: {
     flexDirection: 'row',
@@ -161,7 +165,7 @@ const styles = StyleSheet.create({
     height: 9,
     flex: 1,
     borderRadius: 5,
-    backgroundColor: '#D8D8DC',
+    backgroundColor: appColors.track,
   },
   progressSegmentCompleted: {
     backgroundColor: appColors.accent,
@@ -172,6 +176,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     fontSize: 14,
     fontWeight: '600',
-    color: '#747480',
+    color: appColors.textSecondary,
   },
 });

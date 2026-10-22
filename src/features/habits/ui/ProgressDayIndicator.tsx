@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   partial: {
     borderWidth: 1.5,
     borderColor: appColors.accent,
-    backgroundColor: '#E7E8ED',
+    backgroundColor: appColors.track,
   },
   partialFill: {
     position: 'absolute',
@@ -74,13 +74,13 @@ const styles = StyleSheet.create({
     backgroundColor: appColors.accent,
   },
   none: {
-    backgroundColor: '#E7E8ED',
+    backgroundColor: appColors.track,
   },
   checkmark: {
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: appColors.onAccent,
   },
   dash: {
-    color: '#8E94A5',
+    color: appColors.textTertiary,
   },
 });

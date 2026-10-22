@@ -12,6 +12,7 @@ import {
 import { HabitForm } from '../features/habits/ui/HabitForm';
 import { HabitPreviewCard } from '../features/habits/ui/HabitPreviewCard';
 import type { CreateHabitStackParamList } from '../navigation/navigationTypes';
+import { appColors } from '../shared/theme/colors';
 
 type CreateHabitScreenProps = NativeStackScreenProps<
   CreateHabitStackParamList,
@@ -88,13 +89,13 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     letterSpacing: 0.2,
-    color: '#747B9A',
+    color: appColors.textSecondary,
   },
   helperText: {
     marginTop: 8,
     marginHorizontal: 12,
     fontSize: 13,
     lineHeight: 18,
-    color: '#747B9A',
+    color: appColors.textSecondary,
   },
 });

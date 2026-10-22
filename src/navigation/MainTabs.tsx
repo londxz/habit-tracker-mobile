@@ -3,7 +3,7 @@ import {
   createNativeBottomTabNavigator,
   type NativeBottomTabIcon,
 } from '@react-navigation/bottom-tabs/unstable';
-import { Platform } from 'react-native';
+import { Appearance, Platform } from 'react-native';
 
 import { ProgressScreen } from '../screens/ProgressScreen';
 import { TodayScreen } from '../screens/TodayScreen';
@@ -53,7 +53,7 @@ function getTodayTabIcon({ focused }: TabBarIconProps): NativeBottomTabIcon {
     source: Ionicons.getImageSourceSync(
       focused ? 'today' : 'today-outline',
       24,
-      '#000000',
+      getAndroidIconColor(),
     ),
   };
 }
@@ -71,7 +71,11 @@ function getProgressTabIcon({ focused }: TabBarIconProps): NativeBottomTabIcon {
     source: Ionicons.getImageSourceSync(
       focused ? 'bar-chart' : 'bar-chart-outline',
       24,
-      '#000000',
+      getAndroidIconColor(),
     ),
   };
+}
+
+function getAndroidIconColor(): string {
+  return Appearance.getColorScheme() === 'dark' ? '#FFFFFF' : '#000000';
 }

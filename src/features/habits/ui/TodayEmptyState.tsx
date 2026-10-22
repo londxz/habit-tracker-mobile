@@ -10,7 +10,11 @@ type TodayEmptyStateProps = {
 export function TodayEmptyState({ onCreateHabitPress }: TodayEmptyStateProps) {
   return (
     <View style={styles.container}>
-      <Ionicons name="calendar-clear-outline" size={72} color="#9A9DA5" />
+      <Ionicons
+        name="calendar-clear-outline"
+        size={72}
+        color={appColors.textTertiary}
+      />
       <Text style={styles.title}>Привычек пока нет</Text>
       <Text style={styles.description}>
         Создайте первую привычку, чтобы начать отслеживать прогресс.
@@ -47,7 +51,7 @@ const styles = StyleSheet.create({
     fontSize: 26,
     lineHeight: 32,
     fontWeight: '700',
-    color: '#111111',
+    color: appColors.textPrimary,
   },
   description: {
     maxWidth: 320,
@@ -55,7 +59,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 17,
     lineHeight: 23,
-    color: '#747480',
+    color: appColors.textSecondary,
   },
   createButton: {
     width: '100%',
@@ -69,7 +73,7 @@ const styles = StyleSheet.create({
   createButtonTitle: {
     fontSize: 17,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: appColors.onAccent,
   },
   buttonPressed: {
     opacity: 0.7,
@@ -77,6 +81,6 @@ const styles = StyleSheet.create({
   privacy: {
     marginTop: 20,
     fontSize: 14,
-    color: '#8E8E93',
+    color: appColors.textTertiary,
   },
 });

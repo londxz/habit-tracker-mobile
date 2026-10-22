@@ -1,5 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import { appColors } from '../../../shared/theme/colors';
+
 import type { HabitColor } from '../model/habitTypes';
 import { getHabitDisplayName } from './getHabitDisplayName';
 import { HabitIcon } from './HabitIcon';
@@ -47,7 +49,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderRadius: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: appColors.surface,
   },
   content: {
     flex: 1,
@@ -56,19 +58,19 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#111111',
+    color: appColors.textPrimary,
   },
   schedule: {
     marginTop: 3,
     fontSize: 15,
-    color: '#747480',
+    color: appColors.textSecondary,
   },
   completionCircle: {
     width: 28,
     height: 28,
     marginLeft: 12,
     borderWidth: 2,
-    borderColor: '#A8AEC0',
+    borderColor: appColors.border,
     borderRadius: 14,
   },
 });

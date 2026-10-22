@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: '#A8AEC0',
+    borderColor: appColors.border,
     borderRadius: 13,
   },
   indicatorSelected: {
@@ -34,6 +34,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 18,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: appColors.onAccent,
   },
 });

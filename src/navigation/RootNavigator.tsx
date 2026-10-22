@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ArchivedHabitsScreen } from '../screens/ArchivedHabitsScreen';
 import { HabitDetailsScreen } from '../screens/HabitDetailsScreen';
 import { ProgressDayDetailsScreen } from '../screens/ProgressDayDetailsScreen';
+import { appColors } from '../shared/theme/colors';
 import { CreateHabitNavigator } from './CreateHabitNavigator';
 import { EditHabitNavigator } from './EditHabitNavigator';
 import { MainTabs } from './MainTabs';
@@ -59,7 +60,7 @@ export function RootNavigator() {
         options={{
           headerShown: false,
           presentation: 'pageSheet',
-          contentStyle: { backgroundColor: '#F2F2F7' },
+          contentStyle: { backgroundColor: appColors.background },
         }}
       />
     </Stack.Navigator>

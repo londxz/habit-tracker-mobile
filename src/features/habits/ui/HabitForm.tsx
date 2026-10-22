@@ -76,6 +76,7 @@ export function HabitForm({
               value={draft.name}
               onChangeText={onNameChange}
               placeholder="Введите"
+              placeholderTextColor={appColors.placeholder}
               maxLength={HABIT_NAME_MAX_LENGTH}
               returnKeyType="done"
               textAlign="right"
@@ -249,7 +250,7 @@ function getNameErrorMessage(error: HabitNameValidationError): string {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F2F2F7',
+    backgroundColor: appColors.background,
   },
   scroll: {
     flex: 1,
@@ -266,12 +267,12 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     letterSpacing: 0.2,
-    color: '#747B9A',
+    color: appColors.textSecondary,
   },
   group: {
     overflow: 'hidden',
     borderRadius: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: appColors.surface,
   },
   row: {
     minHeight: 62,
@@ -281,7 +282,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   rowPressed: {
-    backgroundColor: '#F2F2F7',
+    backgroundColor: appColors.controlBackground,
   },
   rowDisabled: {
     opacity: 0.4,
@@ -289,7 +290,7 @@ const styles = StyleSheet.create({
   rowLabel: {
     fontSize: 17,
     fontWeight: '500',
-    color: '#111111',
+    color: appColors.textPrimary,
   },
   rowValue: {
     flexDirection: 'row',
@@ -302,23 +303,23 @@ const styles = StyleSheet.create({
     marginLeft: 16,
     paddingVertical: 8,
     fontSize: 17,
-    color: '#111111',
+    color: appColors.textPrimary,
   },
   secondaryValue: {
     fontSize: 17,
-    color: '#747B9A',
+    color: appColors.textSecondary,
   },
   chevron: {
     marginLeft: 10,
     fontSize: 32,
     lineHeight: 34,
     fontWeight: '300',
-    color: '#8E96B1',
+    color: appColors.textTertiary,
   },
   separator: {
     height: StyleSheet.hairlineWidth,
     marginLeft: 16,
-    backgroundColor: '#D8D8DE',
+    backgroundColor: appColors.separator,
   },
   colorValue: {
     width: 30,
@@ -328,14 +329,14 @@ const styles = StyleSheet.create({
   },
   colorValueNeutral: {
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: '#C7C7CC',
-    backgroundColor: '#E5E5EA',
+    borderColor: appColors.placeholder,
+    backgroundColor: appColors.controlBackground,
   },
   error: {
     marginTop: 8,
     marginLeft: 12,
     fontSize: 13,
-    color: '#FF3B30',
+    color: appColors.danger,
   },
   weekdays: {
     flexDirection: 'row',
@@ -349,7 +350,7 @@ const styles = StyleSheet.create({
   },
   weekdayName: {
     fontSize: 14,
-    color: '#747B9A',
+    color: appColors.textSecondary,
   },
   weekdaySelected: {
     width: 34,
@@ -363,14 +364,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 21,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: appColors.onAccent,
   },
   helperText: {
     marginTop: 8,
     marginHorizontal: 12,
     fontSize: 13,
     lineHeight: 18,
-    color: '#747B9A',
+    color: appColors.textSecondary,
   },
   switchContainer: {
     alignItems: 'center',
@@ -388,8 +389,8 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     paddingHorizontal: 16,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: '#D1D1D6',
-    backgroundColor: '#FFFFFF',
+    borderTopColor: appColors.separator,
+    backgroundColor: appColors.surface,
   },
   saveButton: {
     minHeight: 54,
@@ -407,7 +408,7 @@ const styles = StyleSheet.create({
   saveButtonTitle: {
     fontSize: 17,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: appColors.onAccent,
   },
   secondaryAction: {
     minHeight: 42,
@@ -419,6 +420,6 @@ const styles = StyleSheet.create({
   },
   secondaryActionTitle: {
     fontSize: 16,
-    color: '#FF3B30',
+    color: appColors.danger,
   },
 });

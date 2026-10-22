@@ -8,6 +8,7 @@ import { useHabits } from '../features/habits/context/HabitsProvider';
 import { getArchivedHabits } from '../features/habits/model/getArchivedHabits';
 import { ArchivedHabitRow } from '../features/habits/ui/ArchivedHabitRow';
 import type { RootStackParamList } from '../navigation/navigationTypes';
+import { appColors } from '../shared/theme/colors';
 
 type ArchivedHabitsScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -63,7 +64,11 @@ function ArchivedHabitsEmptyState() {
   return (
     <View style={styles.emptyState}>
       <View style={styles.emptyIcon}>
-        <Ionicons name="archive-outline" size={34} color="#8E94A5" />
+        <Ionicons
+          name="archive-outline"
+          size={34}
+          color={appColors.textTertiary}
+        />
       </View>
       <Text style={styles.emptyTitle}>Архив пока пуст</Text>
       <Text style={styles.emptyDescription}>
@@ -76,7 +81,7 @@ function ArchivedHabitsEmptyState() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F2F2F7',
+    backgroundColor: appColors.background,
   },
   content: {
     flexGrow: 1,
@@ -87,7 +92,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 12,
     fontSize: 17,
     lineHeight: 24,
-    color: '#747B9A',
+    color: appColors.textSecondary,
   },
   sectionTitle: {
     marginTop: 28,
@@ -96,7 +101,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     letterSpacing: 0.2,
-    color: '#747B9A',
+    color: appColors.textSecondary,
   },
   emptyState: {
     flex: 1,
@@ -111,19 +116,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 34,
-    backgroundColor: '#E5E5EA',
+    backgroundColor: appColors.controlBackground,
   },
   emptyTitle: {
     marginTop: 16,
     fontSize: 21,
     fontWeight: '600',
-    color: '#111111',
+    color: appColors.textPrimary,
   },
   emptyDescription: {
     marginTop: 6,
     fontSize: 16,
     lineHeight: 22,
     textAlign: 'center',
-    color: '#747480',
+    color: appColors.textSecondary,
   },
 });

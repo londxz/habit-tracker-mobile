@@ -48,7 +48,11 @@ export function HabitHistoryCalendar({
             pressed && styles.pressed,
           ]}
         >
-          <Ionicons name="chevron-back" size={28} color="#111111" />
+          <Ionicons
+            name="chevron-back"
+            size={28}
+            color={appColors.textPrimary}
+          />
         </Pressable>
 
         <Text style={styles.monthTitle}>{getMonthTitle(month)}</Text>
@@ -65,7 +69,11 @@ export function HabitHistoryCalendar({
             pressed && styles.pressed,
           ]}
         >
-          <Ionicons name="chevron-forward" size={28} color="#111111" />
+          <Ionicons
+            name="chevron-forward"
+            size={28}
+            color={appColors.textPrimary}
+          />
         </Pressable>
       </View>
 
@@ -167,7 +175,7 @@ const styles = StyleSheet.create({
   monthTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#111111',
+    color: appColors.textPrimary,
   },
   navigationButtonDisabled: {
     opacity: 0.25,
@@ -182,7 +190,7 @@ const styles = StyleSheet.create({
     width: `${100 / 7}%`,
     textAlign: 'center',
     fontSize: 14,
-    color: '#747480',
+    color: appColors.textSecondary,
   },
   days: {
     flexDirection: 'row',
@@ -207,13 +215,13 @@ const styles = StyleSheet.create({
   },
   dayNumber: {
     fontSize: 16,
-    color: '#111111',
+    color: appColors.textPrimary,
   },
   unavailableDayNumber: {
-    color: '#C7C7CC',
+    color: appColors.placeholder,
   },
   highlightedDayNumber: {
-    color: '#111111',
+    color: appColors.textPrimary,
   },
   completedMarker: {
     width: 18,
@@ -228,11 +236,11 @@ const styles = StyleSheet.create({
     fontSize: 11,
     lineHeight: 13,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: appColors.onAccent,
   },
   missedMarker: {
     marginTop: 1,
     fontSize: 16,
-    color: '#A8AEC0',
+    color: appColors.border,
   },
 });

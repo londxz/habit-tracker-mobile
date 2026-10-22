@@ -254,7 +254,7 @@ export function HabitDetailsScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F2F2F7',
+    backgroundColor: appColors.background,
   },
   list: {
     flex: 1,
@@ -269,17 +269,17 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     fontSize: 14,
     fontWeight: '600',
-    color: '#747480',
+    color: appColors.textSecondary,
   },
   notFound: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#F2F2F7',
+    backgroundColor: appColors.background,
   },
   notFoundTitle: {
     fontSize: 22,
     fontWeight: '600',
-    color: '#111111',
+    color: appColors.textPrimary,
   },
 });

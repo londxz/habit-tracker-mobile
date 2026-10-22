@@ -1,5 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { appColors } from '../../../shared/theme/colors';
+
 export type HistoryView = 'calendar' | 'history';
 
 type HistoryViewSwitchProps = {
@@ -48,7 +50,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 4,
     borderRadius: 14,
-    backgroundColor: '#E5E5EA',
+    backgroundColor: appColors.controlBackground,
   },
   button: {
     minHeight: 38,
@@ -58,8 +60,8 @@ const styles = StyleSheet.create({
     borderRadius: 11,
   },
   buttonSelected: {
-    backgroundColor: '#FFFFFF',
-    shadowColor: '#000000',
+    backgroundColor: appColors.surface,
+    shadowColor: appColors.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
     shadowRadius: 3,
@@ -70,10 +72,10 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    color: '#747480',
+    color: appColors.textSecondary,
   },
   titleSelected: {
     fontWeight: '600',
-    color: '#111111',
+    color: appColors.textPrimary,
   },
 });
