@@ -5,7 +5,7 @@ import {
 } from '@react-navigation/native-stack';
 import { Pressable, StyleSheet, Text } from 'react-native';
 
-import { CreateHabitDraftProvider } from '../features/habits/context/CreateHabitDraftProvider';
+import { HabitFormDraftProvider } from '../features/habits/context/HabitFormDraftProvider';
 import { CreateHabitScreen } from '../screens/CreateHabitScreen';
 import { HabitColorPickerScreen } from '../screens/HabitColorPickerScreen';
 import { HabitIconPickerScreen } from '../screens/HabitIconPickerScreen';
@@ -16,7 +16,7 @@ const Stack = createNativeStackNavigator<CreateHabitStackParamList>();
 
 export function CreateHabitNavigator() {
   return (
-    <CreateHabitDraftProvider>
+    <HabitFormDraftProvider>
       <Stack.Navigator
         screenOptions={{
           headerBackButtonDisplayMode: 'minimal',
@@ -44,7 +44,7 @@ export function CreateHabitNavigator() {
           options={{ title: 'Цвет' }}
         />
       </Stack.Navigator>
-    </CreateHabitDraftProvider>
+    </HabitFormDraftProvider>
   );
 }
 

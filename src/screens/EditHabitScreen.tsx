@@ -1,22 +1,220 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { Ionicons } from '@react-native-vector-icons/ionicons';
+import type {
+  NativeStackNavigationProp,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack';
+import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 
-export function EditHabitScreen() {
+import { useHabitFormDraft } from '../features/habits/context/HabitFormDraftProvider';
+import { useHabits } from '../features/habits/context/HabitsProvider';
+import {
+  validateHabitName,
+  type HabitNameValidationError,
+} from '../features/habits/model/habitValidation';
+import { HabitForm } from '../features/habits/ui/HabitForm';
+import type {
+  EditHabitStackParamList,
+  RootStackParamList,
+} from '../navigation/navigationTypes';
+import { getDateKey } from '../shared/date/getDateKey';
+import { useCurrentDate } from '../shared/date/useCurrentDate';
+
+type EditHabitScreenProps = NativeStackScreenProps<
+  EditHabitStackParamList,
+  'EditHabitForm'
+>;
+
+export function EditHabitScreen({ navigation, route }: EditHabitScreenProps) {
+  const { state, dispatch } = useHabits();
+  const { draft, updateDraft } = useHabitFormDraft();
+  const currentDate = useCurrentDate();
+  const [nameError, setNameError] = useState<HabitNameValidationError | null>(
+    null,
+  );
+  const habit = state.habits.find(item => item.id === route.params.habitId);
+  const rootNavigation =
+    navigation.getParent<NativeStackNavigationProp<RootStackParamList>>();
+
+  function handleNameChange(value: string) {
+    updateDraft({ name: value });
+    setNameError(null);
+  }
+
+  function handleSave() {
+    if (habit === undefined) {
+      return;
+    }
+
+    const validationResult = validateHabitName(
+      draft.name,
+      state.habits,
+      habit.id,
+    );
+
+    if (!validationResult.isValid) {
+      setNameError(validationResult.error);
+      return;
+    }
+
+    dispatch({
+      type: 'habitUpdated',
+      habitId: habit.id,
+      changes: {
+        name: validationResult.name,
+        emoji: draft.emoji.trim() || null,
+        color: draft.color,
+        reminder: {
+          isEnabled: draft.isReminderEnabled,
+          time: draft.reminderTime,
+        },
+      },
+    });
+
+    rootNavigation?.goBack();
+  }
+
+  function handleArchivePress() {
+    if (habit === undefined) {
+      return;
+    }
+
+    Alert.alert(
+      'Завершить привычку?',
+      'Она исчезнет из «Сегодня», напоминание отключится, а история сохранится.',
+      [
+        { text: 'Отмена', style: 'cancel' },
+        {
+          text: 'Завершить',
+          style: 'destructive',
+          onPress: () => {
+            dispatch({
+              type: 'habitArchived',
+              habitId: habit.id,
+              archivedOn: getDateKey(currentDate),
+              archivedAt: new Date().toISOString(),
+            });
+            rootNavigation?.goBack();
+          },
+        },
+      ],
+    );
+  }
+
+  function handleDeletePress() {
+    if (habit === undefined) {
+      return;
+    }
+
+    Alert.alert(
+      'Удалить привычку?',
+      'Привычка и вся история выполнения будут удалены безвозвратно.',
+      [
+        { text: 'Отмена', style: 'cancel' },
+        {
+          text: 'Удалить',
+          style: 'destructive',
+          onPress: () => {
+            dispatch({ type: 'habitDeleted', habitId: habit.id });
+            rootNavigation?.popTo('MainTabs');
+          },
+        },
+      ],
+    );
+  }
+
+  if (habit === undefined) {
+    return (
+      <View style={styles.notFound}>
+        <Text style={styles.notFoundTitle}>Привычка не найдена</Text>
+      </View>
+    );
+  }
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Изменение привычки</Text>
-    </View>
+    <HabitForm
+      nameError={nameError}
+      submitTitle="Сохранить изменения"
+      secondaryAction={{
+        title: 'Удалить привычку',
+        onPress: handleDeletePress,
+      }}
+      onNameChange={handleNameChange}
+      onIconPress={() => navigation.navigate('HabitIconPicker')}
+      onColorPress={() => navigation.navigate('HabitColorPicker')}
+      onSubmit={handleSave}
+    >
+      <Text style={styles.sectionTitle}>УПРАВЛЕНИЕ</Text>
+
+      <Pressable
+        accessibilityRole="button"
+        onPress={handleArchivePress}
+        style={({ pressed }) => [
+          styles.archiveAction,
+          pressed && styles.archiveActionPressed,
+        ]}
+      >
+        <Ionicons name="archive-outline" size={27} color="#747480" />
+        <Text style={styles.archiveActionTitle}>Завершить привычку</Text>
+        <Text style={styles.chevron}>›</Text>
+      </Pressable>
+
+      <Text style={styles.helperText}>
+        Она исчезнет из «Сегодня», напоминание отключится, история сохранится.
+      </Text>
+    </HabitForm>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  sectionTitle: {
+    marginTop: 28,
+    marginBottom: 8,
+    marginLeft: 12,
+    fontSize: 13,
+    fontWeight: '600',
+    letterSpacing: 0.2,
+    color: '#747B9A',
+  },
+  archiveAction: {
+    minHeight: 64,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    borderRadius: 16,
+    backgroundColor: '#FFFFFF',
+  },
+  archiveActionPressed: {
+    backgroundColor: '#E5E5EA',
+  },
+  archiveActionTitle: {
+    flex: 1,
+    marginLeft: 14,
+    fontSize: 17,
+    color: '#111111',
+  },
+  chevron: {
+    fontSize: 32,
+    lineHeight: 34,
+    fontWeight: '300',
+    color: '#8E96B1',
+  },
+  helperText: {
+    marginTop: 8,
+    marginHorizontal: 12,
+    fontSize: 13,
+    lineHeight: 18,
+    color: '#747B9A',
+  },
+  notFound: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F2F2F7',
   },
-  title: {
-    fontSize: 32,
-    fontWeight: '700',
+  notFoundTitle: {
+    fontSize: 22,
+    fontWeight: '600',
+    color: '#111111',
   },
 });

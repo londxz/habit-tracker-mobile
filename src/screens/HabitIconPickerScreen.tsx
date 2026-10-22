@@ -1,24 +1,17 @@
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { useCreateHabitDraft } from '../features/habits/context/CreateHabitDraftProvider';
+import { useHabitFormDraft } from '../features/habits/context/HabitFormDraftProvider';
 import { habitEmojiSections } from '../features/habits/ui/habitEmojiSections';
 import { HabitIcon } from '../features/habits/ui/HabitIcon';
 import { HabitPreviewCard } from '../features/habits/ui/HabitPreviewCard';
 import { PickerDoneFooter } from '../features/habits/ui/PickerDoneFooter';
 import { PickerSelectionIndicator } from '../features/habits/ui/PickerSelectionIndicator';
-import type { CreateHabitStackParamList } from '../navigation/navigationTypes';
 import { appColors } from '../shared/theme/colors';
 
-type HabitIconPickerScreenProps = NativeStackScreenProps<
-  CreateHabitStackParamList,
-  'HabitIconPicker'
->;
-
-export function HabitIconPickerScreen({
-  navigation,
-}: HabitIconPickerScreenProps) {
-  const { draft, updateDraft } = useCreateHabitDraft();
+export function HabitIconPickerScreen() {
+  const navigation = useNavigation();
+  const { draft, updateDraft } = useHabitFormDraft();
 
   function handleEmojiPress(emoji: string) {
     updateDraft({ emoji });

@@ -1,10 +1,10 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { ArchivedHabitsScreen } from '../screens/ArchivedHabitsScreen';
-import { EditHabitScreen } from '../screens/EditHabitScreen';
 import { HabitDetailsScreen } from '../screens/HabitDetailsScreen';
 import { ProgressDayDetailsScreen } from '../screens/ProgressDayDetailsScreen';
 import { CreateHabitNavigator } from './CreateHabitNavigator';
+import { EditHabitNavigator } from './EditHabitNavigator';
 import { MainTabs } from './MainTabs';
 import type { RootStackParamList } from './navigationTypes';
 
@@ -26,7 +26,7 @@ export function RootNavigator() {
       <Stack.Screen
         name="HabitDetails"
         component={HabitDetailsScreen}
-        options={{ title: '' }}
+        options={{ title: 'Детали' }}
       />
 
       <Stack.Screen
@@ -40,8 +40,11 @@ export function RootNavigator() {
 
       <Stack.Screen
         name="EditHabit"
-        component={EditHabitScreen}
-        options={{ title: 'Изменить привычку' }}
+        component={EditHabitNavigator}
+        options={{
+          headerShown: false,
+          presentation: 'modal',
+        }}
       />
 
       <Stack.Screen
