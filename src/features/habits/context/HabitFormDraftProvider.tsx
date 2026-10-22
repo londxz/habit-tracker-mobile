@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
 
-import { allHabitWeekdays } from '../model/habitSchedule';
+import { allReminderWeekdays } from '../model/habitReminderDays';
 import type { HabitColor, HabitWeekday } from '../model/habitTypes';
 
 export type HabitFormDraft = {
@@ -26,7 +26,7 @@ export const emptyHabitFormDraft: HabitFormDraft = {
   name: '',
   emoji: '',
   color: null,
-  weekdays: allHabitWeekdays,
+  weekdays: allReminderWeekdays,
   isReminderEnabled: false,
   reminderTime: '08:00',
 };

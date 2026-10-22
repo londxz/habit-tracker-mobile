@@ -95,7 +95,8 @@ export function HabitHistoryCalendar({
             new Date(month.getFullYear(), month.getMonth(), day),
           );
           const entry = entriesByDate.get(dateKey);
-          const isUnavailable = dateKey > highlightedDateKey;
+          const isUnavailable =
+            entry === undefined && dateKey !== highlightedDateKey;
 
           return (
             <View key={dateKey} style={styles.day}>

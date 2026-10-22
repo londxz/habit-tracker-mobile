@@ -9,8 +9,12 @@ import { useState } from 'react';
 import { StatusBar, useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { HabitsProvider } from './src/features/habits/context/HabitsProvider';
+import {
+  HabitsProvider,
+  useHabits,
+} from './src/features/habits/context/HabitsProvider';
 import { HabitReminderController } from './src/features/habits/notifications/HabitReminderController';
+import { HabitsLoadError } from './src/features/habits/ui/HabitsLoadError';
 import { RootNavigator } from './src/navigation/RootNavigator';
 import type { RootStackParamList } from './src/navigation/navigationTypes';
 
@@ -49,7 +53,12 @@ type AppContentProps = {
 };
 
 function AppContent({ isDarkMode }: AppContentProps) {
+  const { hasLoadError, retryLoad } = useHabits();
   const [isNavigationReady, setIsNavigationReady] = useState(false);
+
+  if (hasLoadError) {
+    return <HabitsLoadError onRetry={retryLoad} />;
+  }
 
   return (
     <>

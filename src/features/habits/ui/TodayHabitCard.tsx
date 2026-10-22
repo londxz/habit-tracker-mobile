@@ -2,7 +2,6 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { formatDayCount } from '../../../shared/localization/formatDayCount';
 import { appColors } from '../../../shared/theme/colors';
-import { getHabitScheduleTitle } from '../model/habitSchedule';
 import type { Habit } from '../model/habitTypes';
 import { HabitIcon } from './HabitIcon';
 
@@ -116,7 +115,7 @@ function getHabitSubtitle(
     return `Напоминание · ${habit.reminder.time}`;
   }
 
-  return getHabitScheduleTitle(habit.schedule.weekdays);
+  return 'Каждый день';
 }
 
 const styles = StyleSheet.create({
