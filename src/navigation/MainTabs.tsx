@@ -5,8 +5,8 @@ import {
 } from '@react-navigation/bottom-tabs/unstable';
 import { Appearance, Platform } from 'react-native';
 
-import { ProgressScreen } from '../screens/ProgressScreen';
-import { TodayScreen } from '../screens/TodayScreen';
+import { ProgressScreen } from '../screens/progress/ProgressScreen';
+import { TodayScreen } from '../screens/today/TodayScreen';
 import type { MainTabsParamList } from './navigationTypes';
 
 type TabBarIconProps = {
@@ -33,6 +33,7 @@ export function MainTabs() {
         component={ProgressScreen}
         options={{
           title: 'Прогресс',
+          headerTitleAlign: 'center',
           tabBarIcon: getProgressTabIcon,
         }}
       />

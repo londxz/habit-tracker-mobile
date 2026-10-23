@@ -1,0 +1,211 @@
+import { useNavigation } from '@react-navigation/native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+
+import { useHabitFormDraft } from '../../features/habit-form/HabitFormDraftProvider';
+import type { HabitColor } from '../../entities/habit/model/habitTypes';
+import { habitColorOptions } from '../../entities/habit/ui/habitColors';
+import { HabitPreviewCard } from '../../features/habit-form/HabitPreviewCard';
+import { PickerDoneFooter } from '../../features/habit-form/PickerDoneFooter';
+import { PickerSelectionIndicator } from '../../features/habit-form/PickerSelectionIndicator';
+import { appColors } from '../../shared/theme/colors';
+
+export function HabitColorPickerScreen() {
+  const navigation = useNavigation();
+  const { draft, updateDraft } = useHabitFormDraft();
+
+  function handleColorPress(color: HabitColor | null) {
+    updateDraft({ color });
+  }
+
+  return (
+    <View style={styles.container}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+        <Text style={styles.description}>
+          Цвет помогает отличать привычки и не меняет статус выполнения.
+        </Text>
+
+        <ColorOption
+          name="Без цвета"
+          description="Нейтральное оформление"
+          color="#8E8E93"
+          isSelected={draft.color === null}
+          onPress={() => handleColorPress(null)}
+        />
+
+        <Text style={styles.sectionTitle}>ПАЛИТРА</Text>
+
+        <View style={styles.palette}>
+          {habitColorOptions.map(option => (
+            <ColorOption
+              key={option.value}
+              name={option.name}
+              color={option.hex}
+              isSelected={draft.color === option.value}
+              compact
+              onPress={() => handleColorPress(option.value)}
+            />
+          ))}
+        </View>
+
+        <Text style={styles.sectionTitle}>ПРЕДПРОСМОТР</Text>
+
+        <HabitPreviewCard
+          name={draft.name}
+          emoji={draft.emoji || null}
+          color={draft.color}
+          isReminderEnabled={draft.isReminderEnabled}
+          reminderTime={draft.reminderTime}
+        />
+      </ScrollView>
+
+      <PickerDoneFooter onPress={navigation.goBack} />
+    </View>
+  );
+}
+
+type ColorOptionProps = {
+  name: string;
+  description?: string;
+  color: string;
+  isSelected: boolean;
+  compact?: boolean;
+  onPress: () => void;
+};
+
+function ColorOption({
+  name,
+  description,
+  color,
+  isSelected,
+  compact = false,
+  onPress,
+}: ColorOptionProps) {
+  return (
+    <Pressable
+      accessibilityRole="radio"
+      accessibilityState={{ checked: isSelected }}
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.colorOption,
+        compact && styles.colorOptionCompact,
+        isSelected && styles.colorOptionSelected,
+        pressed && styles.buttonPressed,
+      ]}
+    >
+      {compact ? (
+        <>
+          <View style={styles.compactHeader}>
+            <View style={[styles.swatch, { backgroundColor: color }]} />
+            <PickerSelectionIndicator isSelected={isSelected} />
+          </View>
+          <Text numberOfLines={1} style={styles.colorNameCompact}>
+            {name}
+          </Text>
+        </>
+      ) : (
+        <>
+          <View style={[styles.swatch, { backgroundColor: color }]} />
+
+          <View style={styles.colorText}>
+            <Text style={styles.colorName}>{name}</Text>
+            {description !== undefined ? (
+              <Text style={styles.colorDescription}>{description}</Text>
+            ) : null}
+          </View>
+
+          <PickerSelectionIndicator isSelected={isSelected} />
+        </>
+      )}
+    </Pressable>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: appColors.background,
+  },
+  scroll: {
+    flex: 1,
+  },
+  content: {
+    padding: 16,
+    paddingTop: 24,
+    paddingBottom: 32,
+  },
+  description: {
+    marginHorizontal: 12,
+    marginBottom: 20,
+    fontSize: 17,
+    lineHeight: 23,
+    color: appColors.textSecondary,
+  },
+  sectionTitle: {
+    marginTop: 28,
+    marginBottom: 8,
+    marginLeft: 12,
+    fontSize: 13,
+    fontWeight: '600',
+    letterSpacing: 0.2,
+    color: appColors.textSecondary,
+  },
+  palette: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+  },
+  colorOption: {
+    minHeight: 82,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 14,
+    borderWidth: 2,
+    borderColor: 'transparent',
+    borderRadius: 16,
+    backgroundColor: appColors.surface,
+  },
+  colorOptionCompact: {
+    minHeight: 108,
+    minWidth: '47%',
+    flexGrow: 1,
+    flexBasis: 0,
+    flexDirection: 'column',
+    alignItems: 'stretch',
+  },
+  colorOptionSelected: {
+    borderColor: appColors.accent,
+  },
+  swatch: {
+    width: 46,
+    height: 46,
+    borderRadius: 14,
+  },
+  colorText: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  compactHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  colorName: {
+    fontSize: 17,
+    fontWeight: '500',
+    color: appColors.textPrimary,
+  },
+  colorNameCompact: {
+    marginTop: 10,
+    fontSize: 15,
+    fontWeight: '500',
+    color: appColors.textPrimary,
+  },
+  colorDescription: {
+    marginTop: 2,
+    fontSize: 14,
+    color: appColors.textSecondary,
+  },
+  buttonPressed: {
+    opacity: 0.7,
+  },
+});

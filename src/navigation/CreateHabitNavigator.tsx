@@ -5,10 +5,10 @@ import {
 } from '@react-navigation/native-stack';
 import { Pressable, StyleSheet, Text } from 'react-native';
 
-import { HabitFormDraftProvider } from '../features/habits/context/HabitFormDraftProvider';
-import { CreateHabitScreen } from '../screens/CreateHabitScreen';
-import { HabitColorPickerScreen } from '../screens/HabitColorPickerScreen';
-import { HabitIconPickerScreen } from '../screens/HabitIconPickerScreen';
+import { HabitFormDraftProvider } from '../features/habit-form/HabitFormDraftProvider';
+import { CreateHabitScreen } from '../screens/habit-form/CreateHabitScreen';
+import { HabitColorPickerScreen } from '../screens/habit-form/HabitColorPickerScreen';
+import { HabitIconPickerScreen } from '../screens/habit-form/HabitIconPickerScreen';
 import { appColors } from '../shared/theme/colors';
 import type { CreateHabitStackParamList } from './navigationTypes';
 
