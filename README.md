@@ -42,17 +42,35 @@
 
 ## Запуск
 
-Требуется стандартное React Native-окружение: Node.js 24, npm 11, Xcode и CocoaPods для iOS, Android Studio и JDK 17 для Android.
+### Требования
+
+- Node.js 24 и npm 11
+- macOS и Xcode для запуска iOS
+- Ruby и Bundler для установки CocoaPods-зависимостей
+- Android Studio, Android SDK с настроенной переменной `ANDROID_HOME` и JDK 17 для запуска Android
+- iOS Simulator или созданный в Android Studio виртуальный Android-девайс (AVD)
 
 Клонируйте проект и установите зависимости:
 
 ```bash
 git clone https://github.com/londxz/habit-tracker-mobile.git
 cd habit-tracker-mobile
+nvm install 24
+nvm use 24
 npm ci
 ```
 
+Команды `nvm install` и `nvm use` можно пропустить, если Node.js 24 уже установлен другим способом.
+
 ### iOS
+
+Доступно только на macOS. Если команда `bundle` ещё не установлена:
+
+```bash
+gem install bundler
+```
+
+Установите Ruby- и CocoaPods-зависимости, затем запустите приложение:
 
 ```bash
 bundle install
@@ -62,17 +80,27 @@ npm run ios
 
 ### Android
 
-Запустите первый установленный AVD:
+1. Откройте Android Studio → **Tools → Device Manager**.
+2. Создайте виртуальное устройство, если его ещё нет.
+3. Посмотрите имена установленных AVD:
 
 ```bash
-emulator -avd "$(emulator -list-avds | head -n 1)"
+$ANDROID_HOME/emulator/emulator -list-avds
 ```
 
-После загрузки эмулятора откройте второй терминал в корне проекта:
+4. Запустите нужный эмулятор, подставив имя из предыдущей команды:
+
+```bash
+$ANDROID_HOME/emulator/emulator -avd YOUR_AVD_NAME
+```
+
+5. После полной загрузки эмулятора откройте второй терминал в корне проекта и запустите приложение:
 
 ```bash
 npm run android
 ```
+
+React Native CLI автоматически запустит Metro. Если Metro уже работает, будет использован текущий процесс на порту `8081`.
 
 ## Технологии
 
