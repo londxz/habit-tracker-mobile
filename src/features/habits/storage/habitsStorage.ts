@@ -1,5 +1,6 @@
 import { createMMKV } from 'react-native-mmkv';
 
+import { allReminderWeekdays } from '../model/habitReminderDays';
 import type {
   Habit,
   HabitActivityPeriod,
@@ -18,6 +19,15 @@ export interface HabitsStorage {
 type StoredHabitsStateV3 = {
   version: 3;
   state: HabitsState;
+};
+
+type LegacyHabitV1 = Omit<Habit, 'reminder'> & {
+  reminder: LegacyHabitReminderV2;
+};
+
+type LegacyHabitsStateV1 = {
+  habits: LegacyHabitV1[];
+  completions: HabitCompletion[];
 };
 
 type LegacyHabitReminderV2 = Omit<HabitReminder, 'weekdays'>;
@@ -56,7 +66,10 @@ export const habitsStorage: HabitsStorage = {
 
     const state = restoreHabitsState(storedState);
 
-    if (isRecord(storedState) && storedState.version === 2) {
+    if (
+      isRecord(storedState) &&
+      (storedState.version === 1 || storedState.version === 2)
+    ) {
       saveState(state);
     }
 
@@ -83,6 +96,13 @@ function restoreHabitsState(value: unknown): HabitsState {
   }
 
   switch (value.version) {
+    case 1:
+      if (!isLegacyHabitsStateV1(value.state)) {
+        throw new Error('Invalid legacy habits storage schema');
+      }
+
+      return migrateFromV1(value.state);
+
     case 3:
       if (!isHabitsState(value.state)) {
         throw new Error('Invalid habits storage schema');
@@ -100,6 +120,19 @@ function restoreHabitsState(value: unknown): HabitsState {
     default:
       throw new Error('Unsupported habits storage version');
   }
+}
+
+function migrateFromV1(state: LegacyHabitsStateV1): HabitsState {
+  return {
+    habits: state.habits.map(habit => ({
+      ...habit,
+      reminder: {
+        ...habit.reminder,
+        weekdays: [...allReminderWeekdays],
+      },
+    })),
+    completions: state.completions,
+  };
 }
 
 function migrateFromV2(state: LegacyHabitsStateV2): HabitsState {
@@ -164,6 +197,22 @@ function isLegacyHabitsStateV2(value: unknown): value is LegacyHabitsStateV2 {
   );
 }
 
+function isLegacyHabitsStateV1(value: unknown): value is LegacyHabitsStateV1 {
+  if (!hasValidStateCollections(value, isLegacyHabitV1)) {
+    return false;
+  }
+
+  const habitIds = new Set(value.habits.map(habit => habit.id));
+  const completionKeys = value.completions.map(
+    completion => `${completion.habitId}:${completion.completedOn}`,
+  );
+
+  return (
+    value.completions.every(completion => habitIds.has(completion.habitId)) &&
+    new Set(completionKeys).size === completionKeys.length
+  );
+}
+
 function hasValidStateCollections<T extends { id: string }>(
   value: unknown,
   isValidHabit: (habit: unknown) => habit is T,
@@ -207,6 +256,16 @@ function isLegacyHabitV2(value: unknown): value is LegacyHabitV2 {
     Array.isArray(value.activityPeriods) &&
     value.activityPeriods.length > 0 &&
     value.activityPeriods.every(isLegacyActivityPeriodV2)
+  );
+}
+
+function isLegacyHabitV1(value: unknown): value is LegacyHabitV1 {
+  return (
+    hasValidHabitBase(value) &&
+    isLegacyHabitReminderV2(value.reminder) &&
+    Array.isArray(value.activityPeriods) &&
+    value.activityPeriods.length > 0 &&
+    value.activityPeriods.every(isActivityPeriod)
   );
 }
 
