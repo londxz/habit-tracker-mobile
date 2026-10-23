@@ -1,8 +1,8 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { ArchivedHabitsScreen } from '../screens/ArchivedHabitsScreen';
-import { HabitDetailsScreen } from '../screens/HabitDetailsScreen';
-import { ProgressDayDetailsScreen } from '../screens/ProgressDayDetailsScreen';
+import { ArchivedHabitsScreen } from '../screens/archive/ArchivedHabitsScreen';
+import { HabitDetailsScreen } from '../screens/habit-details/HabitDetailsScreen';
+import { ProgressDayDetailsScreen } from '../screens/progress/ProgressDayDetailsScreen';
 import { appColors } from '../shared/theme/colors';
 import { CreateHabitNavigator } from './CreateHabitNavigator';
 import { EditHabitNavigator } from './EditHabitNavigator';
@@ -16,6 +16,7 @@ export function RootNavigator() {
     <Stack.Navigator
       screenOptions={{
         headerBackButtonDisplayMode: 'minimal',
+        headerTitleAlign: 'center',
       }}
     >
       <Stack.Screen

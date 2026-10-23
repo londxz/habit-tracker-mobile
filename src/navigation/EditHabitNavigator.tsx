@@ -9,11 +9,11 @@ import {
   emptyHabitFormDraft,
   HabitFormDraftProvider,
   type HabitFormDraft,
-} from '../features/habits/context/HabitFormDraftProvider';
-import { useHabits } from '../features/habits/context/HabitsProvider';
-import { EditHabitScreen } from '../screens/EditHabitScreen';
-import { HabitColorPickerScreen } from '../screens/HabitColorPickerScreen';
-import { HabitIconPickerScreen } from '../screens/HabitIconPickerScreen';
+} from '../features/habit-form/HabitFormDraftProvider';
+import { useHabits } from '../entities/habit/context/HabitsProvider';
+import { EditHabitScreen } from '../screens/habit-form/EditHabitScreen';
+import { HabitColorPickerScreen } from '../screens/habit-form/HabitColorPickerScreen';
+import { HabitIconPickerScreen } from '../screens/habit-form/HabitIconPickerScreen';
 import { appColors } from '../shared/theme/colors';
 import type {
   EditHabitStackParamList,

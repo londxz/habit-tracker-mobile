@@ -5,16 +5,16 @@ import {
   NavigationContainer,
   type Theme,
 } from '@react-navigation/native';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { StatusBar, useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import {
   HabitsProvider,
   useHabits,
-} from './src/features/habits/context/HabitsProvider';
-import { HabitReminderController } from './src/features/habits/notifications/HabitReminderController';
-import { HabitsLoadError } from './src/features/habits/ui/HabitsLoadError';
+} from './src/entities/habit/context/HabitsProvider';
+import { HabitsLoadError } from './src/entities/habit/ui/HabitsLoadError';
+import { HabitReminderController } from './src/features/habit-reminders/HabitReminderController';
 import { RootNavigator } from './src/navigation/RootNavigator';
 import type { RootStackParamList } from './src/navigation/navigationTypes';
 
@@ -55,6 +55,11 @@ type AppContentProps = {
 function AppContent({ isDarkMode }: AppContentProps) {
   const { hasLoadError, retryLoad } = useHabits();
   const [isNavigationReady, setIsNavigationReady] = useState(false);
+  const openHabit = useCallback((habitId: string) => {
+    if (navigationRef.isReady()) {
+      navigationRef.navigate('HabitDetails', { habitId });
+    }
+  }, []);
 
   if (hasLoadError) {
     return <HabitsLoadError onRetry={retryLoad} />;
@@ -63,8 +68,8 @@ function AppContent({ isDarkMode }: AppContentProps) {
   return (
     <>
       <HabitReminderController
-        navigationRef={navigationRef}
         isNavigationReady={isNavigationReady}
+        onOpenHabit={openHabit}
       />
 
       <NavigationContainer
