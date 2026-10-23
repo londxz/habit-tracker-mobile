@@ -46,6 +46,7 @@ export function EditHabitNavigator({ route }: EditHabitNavigatorProps) {
       <Stack.Navigator
         screenOptions={{
           headerBackButtonDisplayMode: 'minimal',
+          headerTitleAlign: 'center',
           contentStyle: styles.content,
         }}
       >

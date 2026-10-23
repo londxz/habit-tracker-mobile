@@ -20,6 +20,7 @@ export function CreateHabitNavigator() {
       <Stack.Navigator
         screenOptions={{
           headerBackButtonDisplayMode: 'minimal',
+          headerTitleAlign: 'center',
           contentStyle: styles.content,
         }}
       >
